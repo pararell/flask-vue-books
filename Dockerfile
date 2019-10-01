@@ -21,8 +21,6 @@ RUN apk update && apk add mysql mysql-client gcc python3-dev musl-dev libffi-dev
 COPY --from=build-vue /app/dist /usr/share/nginx/html
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY ./server/requirements.txt ./
-# ENV http_proxy http://proxy-chain.xxx.com:911/
-# ENV https_proxy http://proxy-chain.xxx.com:912/
 RUN pip install -r requirements.txt
 RUN pip install gunicorn
 COPY ./server .

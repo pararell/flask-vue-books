@@ -71,6 +71,7 @@ from .main.resources.book import Book, BookList
 from .main.resources.searchBook import SearchBook
 from .main.resources.showBook import ShowBook
 from .main.resources.shelf import Shelf, ShelfList
+db.create_all()
 
 
 api.add_resource(Shelf, '/api/shelf/<string:name>/<int:user_id>')
