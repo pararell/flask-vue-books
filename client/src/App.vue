@@ -6,8 +6,9 @@
             <v-toolbar>
                 <v-toolbar-title class="headline text-uppercase">My Library</v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-toolbar-items class="hidden-sm-and-down">
+                <v-toolbar-items>
                     <v-btn :to="{ name: 'shelfs' }">Shelfs</v-btn>
+                    <v-btn :to="{ name: 'categories' }">Categories</v-btn>
                     <v-btn v-if="!user" :to="{ name: 'login' }">Login</v-btn>
                     <v-btn v-if="user" :to="{ name: 'login' }">Logout</v-btn>
                 </v-toolbar-items>
@@ -18,7 +19,7 @@
         <!-- End of Navigation -->
 
         <v-content class="main-content">
-            <router-view/>
+             <router-view/>
         </v-content>
 
         <v-footer>

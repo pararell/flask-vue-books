@@ -26,12 +26,12 @@ def searchByQuery(xmldata):
             publication_year = child.find("original_publication_year").text
 
             book['id'] = id if id else None
-            book['title'] = title.replace("/", " ") if title else None
-            book['author'] = author if author else None
-            book['rating'] = rating if rating else None
-            book['ratingsCount'] = ratingsCount if ratingsCount else None
-            book['year'] = publication_year if publication_year else None
-            book['image'] = img_url if img_url else None
+            book['title'] = title.replace("/", " ") if title else ''
+            book['author'] = author if author else ''
+            book['rating'] = rating if rating else ''
+            book['ratingsCount'] = ratingsCount if ratingsCount else ''
+            book['year'] = publication_year if publication_year else ''
+            book['image'] = img_url if img_url else ''
 
             result.append(book)
 
@@ -45,11 +45,11 @@ def showBookApply(xmldata):
 
     author = book['authors']['author'][0]['name'] if isinstance(book['authors']['author'], list) else book['authors']['author']['name']
 
-    book['bookId']  = book['id'] if book['id'] else None
-    book['author']  = author if author else None
-    book['pages']   = book['num_pages'] if book['num_pages'] else None
-    book['year']    = book['publication_year'] if book['publication_year'] else None
-    book['image']   = book['image_url'] if book['image_url'] else None
+    book['bookId']  = book['id'] if book['id'] else ''
+    book['author']  = author if author else ''
+    book['pages']   = book['num_pages'] if book['num_pages'] else ''
+    book['year']    = book['publication_year'] if book['publication_year'] else ''
+    book['image']   = book['image_url'] if book['image_url'] else ''
 
     return book
 
@@ -59,7 +59,9 @@ def detailBookApply(xmldata):
 
     root = ET.fromstring(xmldata)
     result = root.find('book')
-    similarBook = []
+    similarBooks = []
+    reviews      = ''
+    bookInfo     = {}
 
     for item in result.find("similar_books"):
         # create an empty book dictionary and populate with info from each result
@@ -70,14 +72,18 @@ def detailBookApply(xmldata):
         author = item.find("authors").find('author').find('name').text
         img_url = item.find("image_url").text
         rating = item.find("average_rating").text
+        year = item.find("publication_year").text
 
         book['id'] = id if id else None
-        book['title'] = title.replace("/", " ") if title else None
-        book['author'] = author if author else None
-        book['image'] = img_url if img_url else None
-        book['rating'] = rating if rating else None
+        book['title'] = title.replace("/", " ") if title else ''
+        book['author'] = author if author else ''
+        book['image'] = img_url if img_url else ''
+        book['rating'] = rating if rating else ''
+        book['year']  = year if year else ''
 
-        similarBook.append(book)
+        similarBooks.append(book)
 
+    reviews = result.find('reviews_widget').text
+    bookInfo = { 'similarBooks': similarBooks, 'reviews': reviews }
 
-    return similarBook
+    return bookInfo

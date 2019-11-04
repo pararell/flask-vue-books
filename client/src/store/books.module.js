@@ -8,7 +8,7 @@ const state = {
   books: null,
   book: null,
   foundBooks: [],
-  bookToShow: {},
+  bookToShow: {}
 };
 
 const actions = {
@@ -28,7 +28,7 @@ const actions = {
   getById({ dispatch, commit }, book) {
     commit('bookByNameRequest');
 
-    bookService.getById(book.bookId, book.shelf_id).then(
+    bookService.getById(book.bookId, book.shelf_id, book.user_id).then(
       book => {
         commit('bookRequestSuccess', book);
       },
@@ -51,10 +51,23 @@ const actions = {
       }
     );
   },
+  updateBook({ dispatch, commit }, book) {
+    commit('addBook');
+
+    bookService.update(book).then(
+      book => {
+        commit('addBookSuccess', book);
+      },
+      error => {
+        commit('bookRequestFailure', error);
+        dispatch('modal/error', error, { root: true });
+      }
+    );
+  },
   removeBook({ dispatch, commit }, book) {
     commit('addBook');
 
-    bookService.delete(book.bookId, book.shelf_id).then(
+    bookService.delete(book.bookId, book.shelf_id, book.user_id).then(
       book => {
         commit('removeBookSuccess', book);
       },
@@ -92,7 +105,7 @@ const actions = {
   },
   removeFoundBooks({ commit }) {
     commit('removeFoundBooks');
-  },
+  }
 };
 
 const mutations = {

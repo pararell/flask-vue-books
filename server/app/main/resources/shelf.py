@@ -26,8 +26,8 @@ class Shelf(Resource):
                         )
 
     @classmethod
-    def get(cls, name, user_id):
-        shelf = ShelfModel.find_by_name(name, user_id)
+    def get(cls, shelf_id, user_id):
+        shelf = ShelfModel.find_by_id(shelf_id, user_id)
         if shelf:
             return shelf.json()
         return {'message': 'shelf not found'}, 404
@@ -48,8 +48,8 @@ class Shelf(Resource):
         return shelf.json(), 201
 
     @classmethod
-    def delete(cls, name, user_id):
-        shelf = ShelfModel.find_by_name(name, user_id)
+    def delete(cls, shelf_id, user_id):
+        shelf = ShelfModel.find_by_id(shelf_id, user_id)
         if shelf:
             shelf.delete_from_db()
 

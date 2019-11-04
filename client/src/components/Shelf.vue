@@ -1,5 +1,6 @@
 <template>
     <div class="shelf_component">
+
         <template v-if="status.loading">
             <loader></loader>
        </template>
@@ -14,8 +15,8 @@
         </div>
 
         <v-container class="shelf_component-container">
-
-            <div class="shelf_component-books" v-if="shelf.books.length">
+            <sort v-bind:type="'shelfs'"></sort>
+            <div class="shelf_component-books" v-if="shelf.books && shelf.books.length">
                 <div v-for="book in shelf.books" :key="book.id" class="shelf_component-book">
                     <div class="shelf_component-book-content" @click="saveBook(book)">
                         <router-link class="shelf_component-book-text"
@@ -32,7 +33,11 @@
 
             <form @submit.prevent="handleSubmit">
                 <div class="form-group">
-                    <v-text-field type="text" label="Name" v-model="name" name="name"
+                    <v-text-field
+                      type="text"
+                      label="Name"
+                      v-model="name"
+                      name="name"
                       :class="{ 'is-invalid': submitted && !name }">
                     </v-text-field>
                     <div v-show="submitted && !name" class="invalid-feedback">Name is required</div>
@@ -51,25 +56,27 @@
 
         </v-container>
       </template>
-
   </div>
 </template>
 
 <script>
 import Loader from './Loader.vue';
 import Books from './Books.vue';
+import Sort from './Sort.vue';
 import { mapState, mapActions } from 'vuex';
+
 
 export default {
     data() {
         return {
             name: '',
-            submitted: false,
+            submitted: false
         };
     },
     components: {
         loader  : Loader,
-        books   : Books
+        books   : Books,
+        sort    : Sort
     },
     computed: {
         ...mapState('shelfs', ['status', 'shelf', 'allShelfs']),
@@ -78,9 +85,9 @@ export default {
             foundBooks  : 'foundBooks',
             bookToShow  : 'bookToShow',
             booksStatus : 'status'
-        }),
+        })
     },
-    mounted() {
+    created() {
         this.tokenRefresh();
 
         if (!this.allShelfs && this.user) {
@@ -88,12 +95,12 @@ export default {
         }
 
         this.unsub = this.$store.subscribe((mutation, state) => {
-            if (mutation.type === 'account/userSave' && mutation.payload && (!this.shelf || this.shelf && this.shelf.name !== this.$route.params.shelfName)) {
-                this.getByName({ name: this.$route.params.shelfName, user: this.user });
+            if (mutation.type === 'account/userSave' && mutation.payload && (!this.shelf || this.shelf && this.shelf.id !== this.$route.params.shelfId)) {
+                this.getById({ id: this.$route.params.shelfId, user: this.user });
             }
 
             if (mutation.type === 'books/removeBookSuccess' || mutation.type === 'books/addBookSuccess') {
-                this.getByName({ name: this.$route.params.shelfName, user: this.user });
+                this.getById({ id: this.$route.params.shelfId, user: this.user });
             }
 
         });
@@ -102,7 +109,7 @@ export default {
         this.unsub();
     },
     methods: {
-        ...mapActions('shelfs', ['getByName', 'getAllShelfs']),
+        ...mapActions('shelfs', ['getById', 'getAllShelfs']),
         ...mapActions('account', ['tokenRefresh']),
         ...mapActions('books', ['searchBooks', 'saveBookToStore', 'removeBook']),
 
@@ -171,6 +178,7 @@ export default {
   &-books {
     display: flex;
     flex-wrap: wrap;
+    margin-bottom: 50px;
   }
 
   &-book {

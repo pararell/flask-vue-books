@@ -20,15 +20,21 @@ function getAll() {
   return fetch(`${process.env.VUE_APP_API_URL}/api/books`, requestOptions).then(handleResponse);
 }
 
-function getById(bookId, shelfId) {
+function getById(book_id, shelf_id, user_id) {
   const requestOptions = {
     method: 'GET',
     headers: authHeader()
   };
 
-  return fetch(`${process.env.VUE_APP_API_URL}/api/book/${shelfId}/${bookId}`, requestOptions)
+  return fetch(`${process.env.VUE_APP_API_URL}/api/book/${shelf_id}/${book_id}/${user_id}`, requestOptions)
     .then(handleResponse)
-    .then(bookAll => ({...bookAll.book, similarBooks: bookAll.similarBooks}));
+    .then(bookAll =>
+      ({...bookAll.book,
+        similarBooks: bookAll.similarBooks,
+        reviews: bookAll.reviews
+         .replace(/(?:[^\w-])width\s*(=\s*(["'])[^"']+\2\s*|:\s*[^;]+;)/g, ' ')
+         .replace("<iframe", "<iframe width='100%'")
+      }));
 }
 
 function add(book) {
@@ -38,27 +44,27 @@ function add(book) {
     body: JSON.stringify(book)
   };
 
-  return fetch(`${process.env.VUE_APP_API_URL}/api/book/${book.shelf_id}/${book.bookId}`, requestOptions).then(handleResponse);
+  return fetch(`${process.env.VUE_APP_API_URL}/api/book/${book.shelf_id}/${book.bookId}/${book.user_id}`, requestOptions).then(handleResponse);
 }
 
 function update(book) {
   const requestOptions = {
     method: 'PUT',
     headers: { ...authHeader(), 'Content-Type': 'application/json' },
-    body: JSON.stringify(book)
+    body: {}
   };
 
-  return fetch(`${process.env.VUE_APP_API_URL}/api/book/${book.id}`, requestOptions).then(handleResponse);
+  return fetch(`${process.env.VUE_APP_API_URL}/api/updateBook/${book.shelf_id}/${book.bookId}/${book.category_id}/${book.user_id}`, requestOptions).then(handleResponse);
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript
-function _delete(book_id, shelf_id) {
+function _delete(book_id, shelf_id, user_id) {
   const requestOptions = {
     method: 'DELETE',
     headers: authHeader()
   };
 
-  return fetch(`${process.env.VUE_APP_API_URL}/api/book/${shelf_id}/${book_id}`, requestOptions).then(handleResponse);
+  return fetch(`${process.env.VUE_APP_API_URL}/api/book/${shelf_id}/${book_id}/${user_id}`, requestOptions).then(handleResponse);
 }
 
 function searchBooks(name) {

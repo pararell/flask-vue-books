@@ -9,7 +9,7 @@ class ShelfModel(db.Model):
     image    = db.Column(db.Text)
     category = db.Column(db.Text)
 
-    books    = db.relationship('BookModel', lazy='dynamic')
+    books    = db.relationship('BookModel', lazy = 'dynamic')
 
     user_id  = db.Column(db.Integer, db.ForeignKey('users.id'))
     user     = db.relationship('UserModel')
@@ -23,17 +23,21 @@ class ShelfModel(db.Model):
 
     def json(self):
         return {
-            'id'        : self.id,
-            'name'      : self.name,
-            'image'     : self.image,
-            'category'  : self.category,
+            'id'         : self.id,
+            'name'       : self.name,
+            'image'      : self.image,
+            'category'   : self.category,
             'books'     : [book.json() for book in self.books.all()],
-            'user_id'   : self.user_id
+            'user_id'    : self.user_id
         }
 
     @classmethod
     def find_by_name(cls, name, user_id):
         return cls.query.filter_by(user_id=user_id).filter_by(name=name).first()
+
+    @classmethod
+    def find_by_id(cls, id, user_id):
+        return cls.query.filter_by(user_id=user_id).filter_by(id=id).first()
 
     @classmethod
     def find_all(cls, user_id):

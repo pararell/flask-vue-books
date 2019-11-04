@@ -5,7 +5,13 @@ const state = {
     loading: false
   },
   allShelfs: null,
-  shelf: null
+  shelf: null,
+  sorts: [
+    { label: 'added',  name: 'id',     active: 'desc' },
+    { label: 'year',   name: 'year',   active: ''  },
+    { label: 'name',   name: 'title',  active: '' },
+    { label: 'author', name: 'author', active: '' }
+  ]
 };
 
 const actions = {
@@ -22,10 +28,10 @@ const actions = {
       }
     );
   },
-  getByName({ dispatch, commit }, nameAndUser) {
+  getById({ dispatch, commit }, idAndUser) {
     commit('shelfByNameRequest');
 
-    shelfService.getByName(nameAndUser.name, nameAndUser.user).then(
+    shelfService.getById(idAndUser.id, idAndUser.user).then(
       shelf => {
         commit('shelfRequestSuccess', shelf);
       },
@@ -64,6 +70,9 @@ const actions = {
   saveShelfToStore({ commit }, shelf) {
     commit('shelfRequestSuccess', shelf);
   },
+  setSort({ commit }, sort) {
+    commit('setSort', sort);
+  }
 };
 
 const mutations = {
@@ -80,10 +89,7 @@ const mutations = {
   },
   shelfByNameRequest(state) {
     state.status = { loading: true };
-  },
-  bookRequestSuccess(state, shelf) {
-    state.status = { loading: false };
-    state.shelf = shelf;
+    state.shelf  = null;
   },
   shelfRequestFailure(state) {
     state.status    = {};
@@ -103,6 +109,29 @@ const mutations = {
   removeShelfsuccess(state, shelf) {
     state.status = { loading: false };
   },
+  setSort(state, selectSort) {
+    state.sorts = state.sorts
+      .map(sort => ({...sort, active: selectSort.name === sort.name
+          ? selectSort.active
+          : ''
+    }));
+    const activeSort = state.sorts
+      .filter(sort => sort.active)[0];
+
+    state.shelf = state.shelf
+      ? {...state.shelf,
+          books: state.shelf.books
+            .map(book => ({...book, id: book.id.toString()}))
+            .sort((a,b) => {
+              if (activeSort.active === 'asc') {
+                return a[activeSort.name].localeCompare(b[activeSort.name]);
+              } else {
+                return b[activeSort.name].localeCompare(a[activeSort.name]);
+              }
+            })
+        }
+      : null;
+  }
 };
 
 export const shelfs = {

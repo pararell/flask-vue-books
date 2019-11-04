@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import get_jwt_identity, jwt_required, get_jwt_claims, fresh_jwt_required, jwt_optional
 from app.main.models.book import BookModel
+from app.main.models.category import CategoryModel
 from app.main.helper import detailBookApply
 from app.main.config import BaseConfig
 import requests
@@ -72,11 +73,16 @@ class Book(Resource):
                         required=True,
                         help="Every book needs a year."
                         )
+    parser.add_argument('categories',
+                    type=list,
+                    required=False,
+                    help="Categories."
+                    )
 
     @jwt_required
-    def get(self, shelf_id, bookId):
+    def get(self, shelf_id, bookId, user_id):
         fullBook = {}
-        book = BookModel.find_by_id(bookId, shelf_id)
+        book = BookModel.find_by_id(bookId, shelf_id, user_id)
 
         goodreadsResponse = requests.get('https://www.goodreads.com/book/show/'"{}"'.xml'.format(bookId),
             params={'key': BaseConfig.GOODREADS_KEY})
@@ -84,7 +90,8 @@ class Book(Resource):
 
         fullBook = {
             'book'          : book.json() if book else {},
-            'similarBooks'  : goodReadsbook
+            'similarBooks'  : goodReadsbook['similarBooks'],
+            'reviews'       : goodReadsbook['reviews']
         }
 
         if book:
@@ -92,9 +99,9 @@ class Book(Resource):
         return {'message': 'book not found'}, 404
 
     @jwt_required
-    def post(self, shelf_id, bookId):
+    def post(self, shelf_id, bookId, user_id):
 
-        if BookModel.find_by_id(bookId, shelf_id):
+        if BookModel.find_by_id(bookId, shelf_id, user_id):
             return {'message': "An book with bookId '{}' already exists.".format(bookId)}, 400
 
         data = self.parser.parse_args()
@@ -112,31 +119,30 @@ class Book(Resource):
         return book.json(), 201
 
     @jwt_required
-    def delete(self, shelf_id, bookId):
+    def delete(self, shelf_id, bookId, user_id):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
         #     return {'message': 'Admin privilege required.'}, 401
 
-        book = BookModel.find_by_id(bookId, shelf_id)
+        book = BookModel.find_by_id(bookId, shelf_id, user_id)
+        book.categories = []
         if book:
             book.delete_from_db()
             return {'message': 'book deleted.'}
         return {'message': 'book not found.'}, 404
 
-    def put(self, shelf_id, bookId):
 
-        book = BookModel.find_by_id(bookId, shelf_id)
+    @jwt_required
+    def put(self, shelf_id, bookId, category_id, user_id):
 
-        data = self.parser.parse_args()
+        book = BookModel.find_by_id(bookId, shelf_id, user_id)
+        category = CategoryModel.find_by_id(category_id, user_id)
 
         if book:
-            book.pages = data['pages']
-        else:
-            book = BookModel(name, **data)
+            book.categories.append(category)
+            book.save_to_db()
 
-        book.save_to_db()
-
-        return book.json()
+        return book.json() if book else {}
 
 
 class BookList(Resource):

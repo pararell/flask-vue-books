@@ -49,4 +49,9 @@ docker rm flask-vue-books
 check files
 docker exec flask-vue-books ls
 
+
+docker build -t registry.heroku.com/my-private-library/web .
+docker push registry.heroku.com/my-private-library/web
+heroku container:release --app my-private-library web
+
 ```

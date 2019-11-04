@@ -1,56 +1,64 @@
 <template>
  <div class="books_component">
-    <v-container>
-      <div class="books_component-books" v-if="books">
-          <div class="books_component-book" v-for="book in books" :key="book.id" @click="choseBook(book)">
-              <div class="books_component-book-content">
-                  <v-img v-bind:src="book.image"></v-img>
-                  <b>{{ book.title }}</b> <br/> <br/>
-                  {{book.author}} <br/>
-                  {{ book.year }}<br/><br/>
-                  Rating : {{ book.rating }}
+  <v-container>
+    <div class="books_component-books" v-if="books">
+    <v-sheet class="mx-auto"  max-width="1200">
+      <v-slide-group show-arrows>
+        <v-slide-item class="books_component-book" v-for="book in books" :key="book.id">
+              <div class="books_component-book-content"  @click="choseBook(book)">
+                  <v-img class="books_component-book-image" v-bind:src="book.image"></v-img>
+                  <div class="books_component-book-detail">
+                    <div>
+                      <b>{{ book.title }}</b>
+                    </div>
+                    <div>
+                      <span>{{ book.author }} </span> <span> {{ book.year }}</span>
+                    </div>
+                  </div>
+                  <!-- <p class="books_component-book-rating">{{ book.rating }}</p> -->
               </div>
-          </div>
+          </v-slide-item>
+        </v-slide-group>
+      </v-sheet>
+    </div>
+  </v-container>
+
+  <modal v-if="showModal" @close="toggleModal">
+    <template v-if="loading">
+      <div slot="body">
+        <loader></loader>
       </div>
-    </v-container>
+    </template>
+    <template v-if="!loading">
+      <h3 slot="header">{{ bookDetail.title }} <span v-if="bookDetail.year">({{bookDetail.year}})</span> </h3>
+      <div slot="body">
+        <p v-html="bookDetail.description"> </p>
+        <a v-if="bookDetail.link" v-bind:href="bookDetail.link" target="_blank">Goodreads</a>
+      </div>
+      <div slot="footer" class="books_component-book-modal-footer">
+        <form>
+          <div class="form-group">
+              <v-switch v-model="bookIsRead" :label="'Book is readed'"></v-switch>
+              <v-select
+                v-model="chosenShelf"
+                :items="shelfs"
+                item-text="name"
+                item-value="id"
+                label="Shelf">
+              </v-select>
+          </div>
+          <div class="books_component-book-modal-button-save">
+              <v-btn class="btn btn-primary" @click="handleBookSave">Save book</v-btn>
+          </div>
+        </form>
+          <v-btn class="books_component-book-modal-button-close" @click="toggleModal">
+            OK
+        </v-btn>
+      </div>
+    </template>
+  </modal>
 
-    <modal v-if="showModal" @close="toggleModal">
-      <template v-if="loading">
-        <div slot="body">
-          <loader></loader>
-        </div>
-      </template>
-      <template v-if="!loading">
-        <h3 slot="header">{{ bookDetail.title }} <span v-if="bookDetail.year">({{bookDetail.year}})</span> </h3>
-        <div slot="body">
-          <p v-html=" bookDetail.description"> </p>
-          <a v-if="bookDetail.link" v-bind:href="bookDetail.link" target="_blank">Goodreads</a>
-        </div>
-        <div slot="footer" class="books_component-book-modal-footer">
-          <form>
-            <div class="form-group">
-                <input type="checkbox" id="bookIsRead" v-model="bookIsRead">
-                <label for="bookIsRead">Book is readed</label>
-                <v-select
-                  v-model="chosenShelf"
-                  :items="shelfs"
-                  item-text="name"
-                  item-value="id"
-                  label="Shelf">
-                </v-select>
-            </div>
-            <div class="books_component-book-modal-button-save">
-                <v-btn class="btn btn-primary" @click="handleBookSave">Save book</v-btn>
-            </div>
-          </form>
-            <v-btn class="books_component-book-modal-button-close" @click="toggleModal">
-              OK
-          </v-btn>
-        </div>
-      </template>
-    </modal>
-
-  </div>
+ </div>
 
 </template>
 
@@ -84,28 +92,23 @@
           this.chosenShelf = this.shelfs
             .filter(shelf => shelf.id === this.shelf)[0] || this.chosenShelf;
         },
-          handleBookSave(event) {
-            const book = { ...this.bookDetail,
-                isRead  : this.bookIsRead,
-                shelf_id: this.chosenShelf.id,
-                user_id : this.user
-            };
-            this.addBook(book);
-            this.toggleModal();
-            this.removeFoundBooks();
-        },
-      }
+        handleBookSave(event) {
+          const book = { ...this.bookDetail,
+              isRead  : this.bookIsRead,
+              shelf_id: this.chosenShelf.id,
+              user_id : this.user
+          };
+          this.addBook(book);
+          this.toggleModal();
+          this.removeFoundBooks();
+      },
+    }
 
   }
 </script>
 
 <style lang="scss">
 .books_component {
-  &-books {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
   &-book {
     width: 150px;
     margin: 10px 15px 0 0;
@@ -115,10 +118,22 @@
     box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
     padding: 10px;
     cursor: pointer;
+    position: relative;
   }
 
   &-book-content {
     flex: 1;
+  }
+
+  &-book-image {
+    max-height: 200px;
+  }
+
+  &-book-detail {
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+    white-space: pre-wrap;
   }
 
   &-book-modal-footer {
@@ -133,6 +148,16 @@
 
   &-book-modal-button-close {
     align-self: flex-end;
+  }
+
+  &-book-rating {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 0 !important;
+    font-size: 12px;
+    color: rgba(0,0,0,0.8);
+    padding: 2px;
   }
 }
 </style>

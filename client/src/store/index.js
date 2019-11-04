@@ -5,6 +5,8 @@ import { modal } from './modal.module';
 import { account } from './account.module';
 import { books } from './books.module';
 import { shelfs } from './shelfs.module';
+import { categories } from './categories.module';
+
 
 Vue.use(Vuex);
 
@@ -13,6 +15,7 @@ export const store = new Vuex.Store({
     modal,
     account,
     books,
-    shelfs
+    shelfs,
+    categories
   }
 });

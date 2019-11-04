@@ -1,4 +1,4 @@
-export const shelfService = {
+export const categoryService = {
   getAll,
   getById,
   add,
@@ -13,9 +13,9 @@ function getAll(user) {
     headers: authHeader()
   };
 
-  return fetch(`${process.env.VUE_APP_API_URL}/api/shelfs/${user}`, requestOptions)
+  return fetch(`${process.env.VUE_APP_API_URL}/api/categories/${user}`, requestOptions)
     .then(handleResponse)
-    .then(response => response.shelfs);
+    .then(response => response.categories);
 }
 
 function getById(id, user) {
@@ -24,39 +24,38 @@ function getById(id, user) {
     headers: authHeader()
   };
 
-  return fetch(`${process.env.VUE_APP_API_URL}/api/shelf/${id}/${user}`, requestOptions).then(handleResponse);
+  return fetch(`${process.env.VUE_APP_API_URL}/api/category/${id}/${user}`, requestOptions).then(handleResponse);
 }
 
 
-function add(shelf) {
+function add(category) {
   const requestOptions = {
     method: 'POST',
     headers: { ...authHeader(), 'Content-Type': 'application/json' },
-    body: JSON.stringify(shelf)
+    body: JSON.stringify(category)
   };
 
-  return fetch(`${process.env.VUE_APP_API_URL}/api/addShelf/${shelf.name}/${shelf.user_id}`, requestOptions).then(handleResponse);
+  return fetch(`${process.env.VUE_APP_API_URL}/api/addCategory/${category.name}/${category.user_id}`, requestOptions).then(handleResponse);
 }
 
 
-function update(shelf) {
+function update(category, book_id) {
   const requestOptions = {
     method: 'PUT',
     headers: { ...authHeader(), 'Content-Type': 'application/json' },
-    body: JSON.stringify(shelf)
+    body: {}
   };
-
-  return fetch(`${process.env.VUE_APP_API_URL}/api/shelf/${shelf.name}`, requestOptions).then(handleResponse);
+  return fetch(`${process.env.VUE_APP_API_URL}/api/updateCategory/${category.id}/${category.user_id}/${category.book_id}`, requestOptions).then(handleResponse);
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript
-function _delete(shelf) {
+function _delete(category) {
   const requestOptions = {
     method: 'DELETE',
     headers: authHeader()
   };
 
-  return fetch(`${process.env.VUE_APP_API_URL}/api/shelf/${shelf.id}/${shelf.user_id}`, requestOptions).then(handleResponse);
+  return fetch(`${process.env.VUE_APP_API_URL}/api/category/${category.id}/${category.user_id}`, requestOptions).then(handleResponse);
 }
 
 function handleResponse(response) {
