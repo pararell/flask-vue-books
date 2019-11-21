@@ -30,7 +30,7 @@ class Book(Resource):
                         )
     parser.add_argument('pages',
                         type=float,
-                        required=True,
+                        required=False,
                         help="This field cannot be left blank!"
                         )
     parser.add_argument('shelf_id',

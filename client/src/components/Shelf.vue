@@ -14,24 +14,31 @@
             </div>
         </div>
 
-        <v-container class="shelf_component-container">
-            <sort v-bind:type="'shelfs'"></sort>
+        <v-container class="shelf_component-container" >
+            <sort v-if="shelf.books && shelf.books.length" v-bind:type="'shelfs'" v-bind:count="shelf.books.length"></sort>
             <div class="shelf_component-books" v-if="shelf.books && shelf.books.length">
                 <div v-for="book in shelf.books" :key="book.id" class="shelf_component-book">
                     <div class="shelf_component-book-content" @click="saveBook(book)">
-                        <router-link class="shelf_component-book-text"
+                        <router-link class="shelf_component-book-link"
                           :to="{ name: 'book', params: { shelfId: book.shelf_id, bookId: book.bookId }}">
-                            <v-img v-bind:src="book.image"></v-img>
+                            <v-img class="shelf_component-book-image" v-bind:src="book.image"></v-img>
+                        </router-link>
+                        <div class="shelf_component-book-text">
                             <b class="shelf_component-book-title"> {{ book.title }}</b> <br/><br/>
                             <span class="shelf_component-book-author"> {{ book.author }}</span> <br/>
                             <span class="shelf_component-book-title"> {{ book.year }}</span>
-                        </router-link>
+                            <br/>
+                            <v-chip class="shelf_component-category" v-for="category in book.categories" :key="category.name"
+                              :to="{ name: 'category', params: { categoryId: category.id }}">
+                                {{ category.name }}
+                            </v-chip>
+                        </div>
                     </div>
                     <div class="shelf_component-book-remove" @click="remove(book)">×</div>
                 </div>
             </div>
 
-            <form @submit.prevent="handleSubmit">
+            <form @submit.prevent="handleSubmit" class="shelf_component-form">
                 <div class="form-group">
                     <v-text-field
                       type="text"
@@ -95,7 +102,7 @@ export default {
         }
 
         this.unsub = this.$store.subscribe((mutation, state) => {
-            if (mutation.type === 'account/userSave' && mutation.payload && (!this.shelf || this.shelf && this.shelf.id !== this.$route.params.shelfId)) {
+            if (mutation.type === 'account/userSave' && mutation.payload && (!this.shelf || this.shelf && this.shelf.id != this.$route.params.shelfId)) {
                 this.getById({ id: this.$route.params.shelfId, user: this.user });
             }
 
@@ -182,29 +189,38 @@ export default {
   }
 
   &-book {
-    width: 150px;
+    max-width: 500px;
+    min-width: 300px;
+    min-height: 200px;
     margin: 10px 15px 0 0;
     background: #fff;
     display: flex;
-    flex-flow: column;
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-    padding: 10px;
-    cursor: pointer;
+    padding: 8px;
+    position: relative;
+    flex: 1 0 0;
   }
 
   &-book-content {
       flex: 1;
+      display: flex;
   }
 
   &-book-remove {
     display: flex;
     justify-content: flex-end;
+    align-self: flex-end;
     padding: 0 10px;
     color: rgba(217, 30, 24, 1);
     font-size: 12px;
     box-shadow: 0px 0px 2px rgba(217, 30, 24, 0.5);
+  }
+
+  &-book-image {
+    max-width: 150px;
+    min-width: 150px;
+    margin-right: 10px;
     cursor: pointer;
-    align-self: flex-end;
   }
 
   &-book-text,
@@ -212,6 +228,15 @@ export default {
   &-book-author {
     text-decoration: none;
     color: rgba(0, 0, 0, 0.9);
+    text-align: center;
+  }
+
+  &-category {
+    margin-top: 2px !important;
+  }
+
+  &-form {
+    margin-bottom: 25px;
   }
 }
 

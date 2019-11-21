@@ -135,6 +135,8 @@ const mutations = {
           books: state.category.books
             .map(book => ({...book, id: book.id.toString()}))
             .sort((a,b) => {
+              a[activeSort.name] = a[activeSort.name] || '';
+              b[activeSort.name] = b[activeSort.name] || '';
               if (activeSort.active === 'asc') {
                 return a[activeSort.name].localeCompare(b[activeSort.name]);
               } else {

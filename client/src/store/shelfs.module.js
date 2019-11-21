@@ -11,7 +11,8 @@ const state = {
     { label: 'year',   name: 'year',   active: ''  },
     { label: 'name',   name: 'title',  active: '' },
     { label: 'author', name: 'author', active: '' }
-  ]
+  ],
+  activeSort: null
 };
 
 const actions = {
@@ -23,7 +24,7 @@ const actions = {
         commit('shelfsRequestSuccess', shelfs);
       },
       error => {
-        commit('shelfsRequestFailure', error);
+        commit('shelfRequestFailure', error);
         dispatch('modal/error', error, { root: true });
       }
     );
@@ -36,7 +37,7 @@ const actions = {
         commit('shelfRequestSuccess', shelf);
       },
       error => {
-        commit('shelfsRequestFailure', error);
+        commit('shelfRequestFailure', error);
         dispatch('modal/error', error, { root: true });
       }
     );
@@ -118,11 +119,15 @@ const mutations = {
     const activeSort = state.sorts
       .filter(sort => sort.active)[0];
 
+    state.activeSort = activeSort;
+
     state.shelf = state.shelf
       ? {...state.shelf,
           books: state.shelf.books
             .map(book => ({...book, id: book.id.toString()}))
             .sort((a,b) => {
+              a[activeSort.name] = a[activeSort.name] || '';
+              b[activeSort.name] = b[activeSort.name] || '';
               if (activeSort.active === 'asc') {
                 return a[activeSort.name].localeCompare(b[activeSort.name]);
               } else {

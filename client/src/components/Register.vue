@@ -8,19 +8,16 @@
                   label="Username"
                   v-model="user.username"
                   name="lastName"
-                  :class="{ 'is-invalid': submitted && errors.has('username') }">
+                  :class="{ 'is-invalid': submitted }">
                 </v-text-field>
-                <div v-if="submitted && errors.has('username')" class="invalid-feedback">{{ errors.first('username') }}</div>
             </div>
             <div class="form-group">
                 <v-text-field type="password"
                   label="Password"
                   v-model="user.password"
-                  v-validate="{ required: true, min: 6 }"
                   name="password"
                   class="form-control">
                 </v-text-field>
-                <div v-if="submitted && errors.has('password')" class="invalid-feedback">{{ errors.first('password') }}</div>
             </div>
               <v-btn class="mr-4" :disabled="status.registering" @click="handleSubmit">Register</v-btn>
           </form>
@@ -47,11 +44,7 @@ export default {
         ...mapActions('account', ['register']),
         handleSubmit(e) {
             this.submitted = true;
-            this.$validator.validate().then(valid => {
-                if (valid) {
-                    this.register(this.user);
-                }
-            });
+            this.register(this.user);
         }
     }
 };

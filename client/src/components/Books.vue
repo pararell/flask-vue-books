@@ -1,6 +1,5 @@
 <template>
  <div class="books_component">
-  <v-container>
     <div class="books_component-books" v-if="books">
     <v-sheet class="mx-auto"  max-width="1200">
       <v-slide-group show-arrows>
@@ -20,8 +19,7 @@
           </v-slide-item>
         </v-slide-group>
       </v-sheet>
-    </div>
-  </v-container>
+  </div>
 
   <modal v-if="showModal" @close="toggleModal">
     <template v-if="loading">
@@ -111,11 +109,12 @@
 .books_component {
   &-book {
     width: 150px;
-    margin: 10px 15px 0 0;
+    max-width: 150px;
+    margin: 0 10px 0 0;
     background: #fff;
     display: flex;
     flex-flow: column;
-    box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    border: 1px solid rgba(0,0,0,0.1);
     padding: 10px;
     cursor: pointer;
     position: relative;
@@ -158,6 +157,12 @@
     font-size: 12px;
     color: rgba(0,0,0,0.8);
     padding: 2px;
+  }
+
+  .v-slide-group__next, .v-slide-group__prev {
+    min-width: 40px !important;
+    box-shadow: 0px 1px 2px 2px rgba(0,0,0,0.1);
+    z-index: 1;
   }
 }
 </style>

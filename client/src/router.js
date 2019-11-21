@@ -11,6 +11,8 @@ import Category from './components/Category.vue';
 
 Vue.use(Router);
 
+var rememberScrolling = {};
+
 const router = new Router({
   mode: 'history',
   base: '/',
@@ -26,11 +28,21 @@ const router = new Router({
     { path: '*', redirect: '/' },
   ],
   scrollBehavior (to, from, savedPosition) {
-    return { x: 0, y: 0 }
+
+     if(rememberScrolling[to.path] && to.name != from.name) {
+      return rememberScrolling[to.path];
+    } else if (savedPosition) {
+      return savedPosition;
+    } else {
+      return { x: 0, y: 0 }
+    }
   }
 });
 
 router.beforeEach((to, from, next) => {
+  if (window && window.scrollY) {
+    rememberScrolling[from.path] =  {x : 0, y: window.scrollY};
+  }
   // redirect to login page if not logged in and trying to access a restricted page
   const publicPages = ['/login', '/register'];
   const authRequired = !publicPages.includes(to.path);

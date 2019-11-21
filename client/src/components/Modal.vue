@@ -62,14 +62,38 @@ export default {
 }
 
 .modal-container {
-  width: 300px;
+  width: 85%;
+  max-width: 600px;
   margin: 0px auto;
   background-color: #fff;
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all .3s ease;
   font-family: Helvetica, Arial, sans-serif;
+  height: 100%;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar-track
+{
+   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    background-color: #F5F5F5;
 }
+
+  &::-webkit-scrollbar
+  {
+    width: 12px;
+    background-color: #F5F5F5;
+  }
+
+  &::-webkit-scrollbar-thumb
+  {
+      border-radius: 10px;
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+      background-color: #eee;
+  }
+}
+
 
 .modal-header {
   padding: 20px;

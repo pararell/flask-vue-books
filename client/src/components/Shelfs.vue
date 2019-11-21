@@ -8,7 +8,7 @@
         <template v-if="!status.loading && allShelfs">
           <div class="shelfs_component-shelfs-list">
             <div v-for="shelf in allShelfs" :key="shelf.id">
-              <v-card class="shelfs_component-shelf" max-width="400"
+              <v-card class="shelfs_component-shelf" max-width="300"
                 :to="{ name: 'shelf', params: { shelfId: shelf.id }}">
                   <v-img v-if="!shelf.image" height="400"
                     class="white--text" src="https://cdn5.teebooks.com/256-large_default/bookshelf-u-60-cm.jpg">
@@ -18,7 +18,7 @@
                   </v-img>
                   <h2 class="shelfs_component-shelf-text" headline>
                        {{ shelf.name }} <br/>
-                      ({{ shelf.category }})
+                      <span v-if="shelf.category">({{ shelf.category }})</span>
                   </h2>
                   <div class="shelfs_component-shelf-remove" @click.prevent="remove(shelf)">×</div>
               </v-card>
@@ -138,6 +138,10 @@ export default {
     margin: 10px;
     display: flex;
     flex-flow: column;
+
+   @media (max-width: 600px) {
+        margin: 0 0 10px 0;
+      }
   }
 
   &-shelf-remove {

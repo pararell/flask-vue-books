@@ -52,7 +52,7 @@ class BookModel(db.Model):
             'shelf_id'      : self.shelf_id,
             'user_id'       : self.user_id,
             'isRead'        : self.isRead,
-            'categories'    : [category.id for category in self.categories],
+            'categories'    : [{'id': category.id, 'name': category.name} for category in self.categories],
         }
 
 

@@ -8,29 +8,28 @@
     "lint": "eslint --ext .js,.vue resources/js/"
   },
   "dependencies": {
-    "core-js": "^2.6.5",
-    "vee-validate": "^2.2.8",
+    "core-js": "^3.4.1",
     "vue": "^2.6.10",
-    "vue-router": "^3.0.6",
-    "vuetify": "^2.0.11",
-    "vuex": "^3.1.1"
+    "vue-router": "^3.1.3",
+    "vuetify": "^2.1.10",
+    "vuex": "^3.1.2"
   },
   "devDependencies": {
     "@mdi/font": "^4.5.95",
-    "@vue/cli-plugin-babel": "^3.7.0",
-    "@vue/cli-plugin-eslint": "^3.7.0",
-    "@vue/cli-service": "^3.7.0",
-    "@vue/eslint-config-airbnb": "^4.0.0",
+    "@vue/cli-plugin-babel": "^4.0.5",
+    "@vue/cli-plugin-eslint": "^4.0.5",
+    "@vue/cli-service": "^4.0.5",
+    "@vue/eslint-config-airbnb": "^5.0.0",
     "babel-eslint": "^10.0.1",
-    "babel-loader": "^7.1.5",
+    "babel-loader": "^8.0.6",
     "babel-preset-env": "^1.6.1",
     "babel-preset-vue": "^2.0.2",
-    "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.0.0",
+    "eslint": "^6.6.0",
+    "eslint-plugin-vue": "^6.0.1",
     "material-design-icons-iconfont": "^5.0.1",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.13.0",
     "path": "^0.12.7",
-    "sass-loader": "^7.3.1",
+    "sass-loader": "^8.0.0",
     "vue-template-compiler": "^2.5.21"
   },
   "eslintConfig": {

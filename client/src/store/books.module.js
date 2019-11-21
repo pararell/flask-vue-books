@@ -56,7 +56,7 @@ const actions = {
 
     bookService.update(book).then(
       book => {
-        commit('addBookSuccess', book);
+        commit('updateBookSuccess', book);
       },
       error => {
         commit('bookRequestFailure', error);
@@ -135,6 +135,10 @@ const mutations = {
     state.status = { loading: true };
   },
   addBookSuccess(state, book) {
+    state.status = { loading: false };
+    state.book = book;
+  },
+  updateBookSuccess(state, book) {
     state.status = { loading: false };
     state.book = book;
   },

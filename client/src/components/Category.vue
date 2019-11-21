@@ -14,9 +14,9 @@
             </div>
         </div>
 
-        <v-container class="category_component-container">
-            <sort v-bind:type="'categories'"></sort>
-            <div class="category_component-books" v-if="category.books && category.books.length">
+        <v-container class="category_component-container" v-if="category.books && category.books.length">
+            <sort v-bind:type="'categories'" v-bind:count="category.books.length"></sort>
+            <div class="category_component-books">
                 <div v-for="book in category.books" :key="book.id" class="category_component-book">
                     <div class="category_component-book-content" @click="saveBook(book)">
                         <router-link class="category_component-book-text"
