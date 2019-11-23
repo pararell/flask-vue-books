@@ -19,10 +19,16 @@
                   {{ sort.label }}
               </v-chip>
           </div>
-          <v-chip v-if="count">
-            <v-icon left>mdi-book</v-icon>
-            {{ count }}
-          </v-chip>
+          <div class="sort_component-search">
+            <div class="sort_component-search">
+              <i class="v-icon notranslate mdi mdi-magnify"></i>
+              <v-text-field label="Search book" v-model="query" v-on:input="searchBook(query)"></v-text-field>
+            </div>
+            <v-chip v-if="count">
+              <v-icon left>mdi-book</v-icon>
+              {{ count }}
+            </v-chip>
+          </div>
       </v-container>
     </div>
 </template>
@@ -33,7 +39,8 @@ import { mapState, mapActions } from 'vuex';
 export default {
       data() {
         return {
-            activeSort: null
+            activeSort: null,
+            query: ''
         };
     },
     created() {
@@ -49,14 +56,18 @@ export default {
         }
       }
     },
+    beforeDestroy() {
+      this.categoriesSetQuery('');
+      this.shelfsSetQuery('');
+    },
     props: ['type', 'count'],
     computed: {
-        ...mapState('shelfs', { shelfsSort: 'sorts' }),
-        ...mapState('categories', { categoriesSort: 'sorts' } )
+        ...mapState('shelfs', { shelfsSort: 'sorts', shelfsQuery: 'query' }),
+        ...mapState('categories', { categoriesSort: 'sorts', categoriesQuery: 'query' } )
     },
     methods: {
-        ...mapActions('shelfs', { shelfsSetSort: 'setSort' } ),
-        ...mapActions('categories', { categoriesSetSort: 'setSort' } ),
+        ...mapActions('shelfs', { shelfsSetSort: 'setSort', shelfsSetQuery: 'setQuery' } ),
+        ...mapActions('categories', { categoriesSetSort: 'setSort', categoriesSetQuery: 'setQuery' } ),
 
         choseSort(sort) {
           const sortToSend = {...sort, active: sort.active === 'asc' ? 'desc' : 'asc'};
@@ -67,6 +78,14 @@ export default {
           }
           if (this.type === 'shelfs') {
             this.shelfsSetSort(sortToSend);
+          }
+        },
+        searchBook(query) {
+          if (this.type === 'categories') {
+             this.categoriesSetQuery(query);
+          }
+          if (this.type === 'shelfs') {
+            this.shelfsSetQuery(query);
           }
         }
     }
@@ -91,6 +110,10 @@ export default {
           color: #fff;
           font-weight: bold;
         }
+    }
+    &-search {
+      display: flex;
+      align-items: center;
     }
 }
 </style>

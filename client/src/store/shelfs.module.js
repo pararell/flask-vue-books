@@ -12,7 +12,8 @@ const state = {
     { label: 'name',   name: 'title',  active: '' },
     { label: 'author', name: 'author', active: '' }
   ],
-  activeSort: null
+  activeSort: null,
+  query: ''
 };
 
 const actions = {
@@ -73,6 +74,9 @@ const actions = {
   },
   setSort({ commit }, sort) {
     commit('setSort', sort);
+  },
+  setQuery({ commit }, query) {
+    commit('setQuery', query);
   }
 };
 
@@ -136,6 +140,9 @@ const mutations = {
             })
         }
       : null;
+  },
+  setQuery(state, query) {
+    state.query = query;
   }
 };
 

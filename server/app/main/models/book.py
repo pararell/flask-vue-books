@@ -31,7 +31,7 @@ class BookModel(db.Model):
         self.author             = author
         self.image              = image
         self.year               = year
-        self.pages              = pages
+        self.pages              = pages or 0
         self.link               = link
         self.shelf_id           = shelf_id
         self.user_id            = user_id
@@ -47,7 +47,7 @@ class BookModel(db.Model):
             'author'        : self.author,
             'image'         : self.image,
             'year'          : self.year,
-            'pages'         : self.pages,
+            'pages'         : self.pages or 0,
             'link'          : self.link,
             'shelf_id'      : self.shelf_id,
             'user_id'       : self.user_id,

@@ -4,7 +4,7 @@
     <v-sheet class="mx-auto"  max-width="1200">
       <v-slide-group show-arrows>
         <v-slide-item class="books_component-book" v-for="book in books" :key="book.id">
-              <div class="books_component-book-content"  @click="choseBook(book)">
+              <div class="books_component-book-content"  @click="chooseBook(book)">
                   <v-img class="books_component-book-image" v-bind:src="book.image"></v-img>
                   <div class="books_component-book-detail">
                     <div>
@@ -69,7 +69,7 @@
         data() {
           return {
               bookIsRead: false,
-              chosenShelf: this.shelfs ? this.shelfs[0] : {}
+              chosenShelf: this.shelfs ? (this.shelfs.filter(shelf => shelf.id == this.shelf)[0] || this.shelfs[0]) : {}
           };
       },
       props: ['books', 'loading', 'user', 'shelf', 'shelfs', 'bookDetail'],
@@ -84,7 +84,7 @@
         ...mapActions('books', ['showBook', 'addBook', 'removeFoundBooks']),
         ...mapActions('modal', ['toggleModal']),
 
-        choseBook(book) {
+        chooseBook(book) {
           this.toggleModal();
           this.showBook(book.id);
           this.chosenShelf = this.shelfs
@@ -93,7 +93,7 @@
         handleBookSave(event) {
           const book = { ...this.bookDetail,
               isRead  : this.bookIsRead,
-              shelf_id: this.chosenShelf.id,
+              shelf_id: this.chosenShelf.id || this.chosenShelf,
               user_id : this.user
           };
           this.addBook(book);

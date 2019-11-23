@@ -5,17 +5,20 @@
             <loader></loader>
        </template>
 
-      <template v-if="!status.loading && shelf">
+      <template v-if="!status.loading && shelf && shelf.books">
         <div class="shelf_component-header"
           v-bind:style="{ 'background-image': 'url(' + ( shelf.image || 'https://cdn5.teebooks.com/256-large_default/bookshelf-u-60-cm.jpg') + ')'}">
             <div class="shelf_component-background">
-                <h1 class="shelf_component-header-title"> <span> {{shelf.name}} <br/> ( {{shelf.category}} )</span>
+                <h1 class="shelf_component-header-title"> <span> {{shelf.name}} <br/> <span v-if="shelf.category">( {{shelf.category}} )</span></span>
                 </h1>
             </div>
         </div>
 
         <v-container class="shelf_component-container" >
-            <sort v-if="shelf.books && shelf.books.length" v-bind:type="'shelfs'" v-bind:count="shelf.books.length"></sort>
+            <sort v-if="shelf.books && shelf.books"
+              v-bind:type="'shelfs'"
+              v-bind:count="shelf.books.length">
+            </sort>
             <div class="shelf_component-books" v-if="shelf.books && shelf.books.length">
                 <div v-for="book in shelf.books" :key="book.id" class="shelf_component-book">
                     <div class="shelf_component-book-content" @click="saveBook(book)">
@@ -86,7 +89,17 @@ export default {
         sort    : Sort
     },
     computed: {
-        ...mapState('shelfs', ['status', 'shelf', 'allShelfs']),
+        ...mapState('shelfs', {
+            status    : 'status',
+            query     : 'query',
+            allShelfs : 'allShelfs',
+            shelf     : state => ({...state.shelf, books: state.shelf
+              ? state.shelf.books
+                .filter(book => (book.author && book.author.toLowerCase().includes(state.query))
+                  || (book.title && book.title.toLowerCase().includes(state.query)))
+              : []
+              })
+        }),
         ...mapState('account', ['user']),
         ...mapState('books', {
             foundBooks  : 'foundBooks',
@@ -139,7 +152,6 @@ export default {
           }
           this.removeBook(bookToRemove);
         }
-
     }
 
 };
@@ -214,6 +226,7 @@ export default {
     color: rgba(217, 30, 24, 1);
     font-size: 12px;
     box-shadow: 0px 0px 2px rgba(217, 30, 24, 0.5);
+    cursor: pointer;
   }
 
   &-book-image {
@@ -239,6 +252,4 @@ export default {
     margin-bottom: 25px;
   }
 }
-
-
 </style>

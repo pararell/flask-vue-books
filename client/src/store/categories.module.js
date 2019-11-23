@@ -11,7 +11,9 @@ const state = {
     { label: 'year',   name: 'year',   active: ''  },
     { label: 'name',   name: 'title',  active: '' },
     { label: 'author', name: 'author', active: '' }
-  ]
+  ],
+  activeSort: null,
+  query: ''
 };
 
 const actions = {
@@ -45,7 +47,7 @@ const actions = {
 
     categoryService.add(category).then(
       category => {
-        commit('addCategorysuccess', category);
+        commit('addCategorySuccess', category);
       },
       error => {
         commit('categoryRequestFailure', error);
@@ -58,7 +60,7 @@ const actions = {
 
     categoryService.update(category).then(
       category => {
-        commit('addCategorysuccess', category);
+        commit('addCategorySuccess', category);
       },
       error => {
         commit('categoryRequestFailure', error);
@@ -71,7 +73,7 @@ const actions = {
 
     categoryService.delete(category).then(
       category => {
-        commit('removeCategorysuccess');
+        commit('removeCategorySuccess');
       },
       error => {
         commit('categoryRequestFailure', error);
@@ -84,6 +86,9 @@ const actions = {
   },
   setSort({ commit }, sort) {
     commit('setSort', sort);
+  },
+  setQuery({ commit }, query) {
+    commit('setQuery', query);
   }
 };
 
@@ -111,14 +116,14 @@ const mutations = {
   addCategory(state) {
     state.status = { loading: true };
   },
-  addCategorysuccess(state, category) {
+  addCategorySuccess(state, category) {
     state.status = { loading: false };
     state.category = category;
   },
   removeCategory(state) {
     state.status = { loading: true };
   },
-  removeCategorysuccess(state, category) {
+  removeCategorySuccess(state, category) {
     state.status = { loading: false };
   },
   setSort(state, selectSort) {
@@ -129,6 +134,8 @@ const mutations = {
     }));
     const activeSort = state.sorts
       .filter(sort => sort.active)[0];
+
+    state.activeSort = activeSort;
 
     state.category = state.category
       ? {...state.category,
@@ -145,6 +152,9 @@ const mutations = {
             })
         }
       : null;
+  },
+  setQuery(state, query) {
+    state.query = query;
   }
 };
 

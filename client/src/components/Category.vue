@@ -52,7 +52,15 @@ export default {
         sort    : Sort
     },
     computed: {
-        ...mapState('categories', ['status', 'category']),
+        ...mapState('categories', {
+          status: 'status',
+        category:  state => ({...state.category, books: state.category
+          ? state.category.books
+            .filter(book => (book.author && book.author.toLowerCase().includes(state.query))
+              || (book.title && book.title.toLowerCase().includes(state.query)))
+          : []
+          })
+        }),
         ...mapState('account', ['user'])
     },
     created() {
@@ -62,7 +70,6 @@ export default {
             if (mutation.type === 'account/userSave' && mutation.payload) {
                 this.getById({ id: this.$route.params.categoryId, user: this.user });
             }
-
         });
     },
     beforeDestroy() {
@@ -76,7 +83,6 @@ export default {
       saveBook(book) {
             this.saveBookToStore(book);
         },
-
       remove(book) {
           const bookToRemove = {
               ...this.category,

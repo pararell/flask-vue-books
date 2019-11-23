@@ -55,7 +55,7 @@
           </template>
           <div class="book_component-book-info">
             <div class="book_component-book-review" v-if="book.reviews" v-html="book.reviews"></div>
-            <div>
+            <div v-if="book.similarBooks && book.similarBooks.length">
               <h2 v-if="book.similarBooks">Similar books</h2>
               <books
                 v-if="book.similarBooks"

@@ -29,9 +29,7 @@ class Book(Resource):
                         help="Every book needs a title."
                         )
     parser.add_argument('pages',
-                        type=float,
-                        required=False,
-                        help="This field cannot be left blank!"
+                        type=float
                         )
     parser.add_argument('shelf_id',
                         type=int,
@@ -74,10 +72,10 @@ class Book(Resource):
                         help="Every book needs a year."
                         )
     parser.add_argument('categories',
-                    type=list,
-                    required=False,
-                    help="Categories."
-                    )
+                        type=list,
+                        required=False,
+                        help="Categories."
+                        )
 
     @jwt_required
     def get(self, shelf_id, bookId, user_id):

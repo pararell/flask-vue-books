@@ -3,16 +3,37 @@
       <v-app>
         <nav>
             <!-- Start of app toolbar -->
-            <v-toolbar>
+            <v-app-bar dense>
                 <v-toolbar-title class="headline text-uppercase">My Library</v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-toolbar-items>
+                <v-toolbar-items class="hidden-sm-and-down">
+                    <v-btn :to="{ name: 'addBook' }">Add Book</v-btn>
                     <v-btn :to="{ name: 'shelfs' }">Shelfs</v-btn>
                     <v-btn :to="{ name: 'categories' }">Categories</v-btn>
-                    <v-btn v-if="!user" :to="{ name: 'login' }">Login</v-btn>
-                    <v-btn v-if="user" :to="{ name: 'login' }">Logout</v-btn>
-                </v-toolbar-items>
-            </v-toolbar>
+                  </v-toolbar-items>
+                  <v-menu left bottom class="hidden-md-and-up">
+                    <template v-slot:activator="{ on }">
+                      <v-btn icon v-on="on">
+                        <v-icon>mdi-dots-vertical</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item :to="{ name: 'addBook' }">
+                        <v-list-item-title>Add Book</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item :to="{ name: 'shelfs' }">
+                        <v-list-item-title>Shelfs</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item :to="{ name: 'categories' }">
+                        <v-list-item-title>Categories</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item :to="{ name: 'login' }">
+                        <v-list-item-title v-if="!user">Login</v-list-item-title>
+                        <v-list-item-title v-if="user">Logout</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+            </v-app-bar>
             <!-- End of app toolbar -->
 
         </nav>
@@ -62,6 +83,7 @@ body {
 
 .main-content {
     min-height: 85vh;
+    // margin-top: 48px;
 }
 
 .center-content {
