@@ -6,11 +6,10 @@
     <template v-if="allShelfs && allShelfs.length && !status.loading">
       <div
         class="addbook_component-header"
-        v-bind:style="{ 'background-image': 'url(' + ('https://cdn5.teebooks.com/256-large_default/bookshelf-u-60-cm.jpg') + ')'}">
+        v-bind:style="{ 'background-image': 'url(' + ('https://cdn5.teebooks.com/256-large_default/bookshelf-u-60-cm.jpg') + ')'}"
+      >
         <div class="addbook_component-background">
-            <h1 class="addbook_component_component-header-title">
-              Add Book
-            </h1>
+          <h1 class="addbook_component_component-header-title">Add Book</h1>
         </div>
       </div>
 
@@ -39,15 +38,15 @@
         ></books>
       </v-container>
     </template>
-   <template v-if="(!allShelfs || (allShelfs && !allShelfs.length)) && !status.loading">
-     Please add shelf first!
-   </template>
+    <template
+      v-if="(!allShelfs || (allShelfs && !allShelfs.length)) && !status.loading"
+    >Please add shelf first!</template>
   </div>
 </template>
 
 <script>
 import Books from "./Books.vue";
-import Loader from './Loader.vue';
+import Loader from "./Loader.vue";
 import { mapState, mapActions } from "vuex";
 
 export default {
@@ -126,7 +125,7 @@ export default {
 
   &-header-title {
     text-align: center;
-    font-family: 'Gentium Book Basic', serif;
+    font-family: "Gentium Book Basic", serif;
   }
 
   &-background {

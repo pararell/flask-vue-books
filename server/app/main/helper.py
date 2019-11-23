@@ -50,6 +50,20 @@ def showBookApply(xmldata):
     book['pages']   = book['num_pages'] if book['num_pages'] else 0
     book['year']    = book['publication_year'] if book['publication_year'] else ''
     book['image']   = book['image_url'] if book['image_url'] else ''
+    book['similarBooks'] = []
+
+    if (book['similar_books'] and book['similar_books']['book'] and len(book['similar_books']['book'])):
+        for item in book['similar_books']['book']:
+
+            author = item['authors']['author'][0]['name'] if isinstance(item['authors']['author'], list) else item['authors']['author']['name']
+
+            item['title'] = item['title'].replace("/", " ") if item['title'] else ''
+            item['author'] = author if author else ''
+            item['image'] = item['image_url']
+            item['rating'] = item['average_rating']
+            item['year']  = item['publication_year']
+
+            book['similarBooks'].append(item)
 
     return book
 
@@ -62,6 +76,7 @@ def detailBookApply(xmldata):
     similarBooks = []
     reviews      = ''
     bookInfo     = {}
+    rating = ''
 
     if (result.find("similar_books")):
         for item in result.find("similar_books"):
@@ -85,6 +100,9 @@ def detailBookApply(xmldata):
             similarBooks.append(book)
 
     reviews = result.find('reviews_widget').text
-    bookInfo = { 'similarBooks': similarBooks, 'reviews': reviews }
+    ratings_count = result.find('ratings_count').text
+    rating = result.find('average_rating').text + ((' (' + ratings_count + ')') if ratings_count else '')
+
+    bookInfo = { 'similarBooks': similarBooks, 'reviews': reviews, 'rating': rating  }
 
     return bookInfo

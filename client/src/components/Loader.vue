@@ -1,10 +1,9 @@
 
 <template>
-    <div class="loader"></div>
+  <div class="loader"></div>
 </template>
 
 <style lang="scss">
-
 .loader {
   width: 100px;
   height: 100px;
@@ -13,7 +12,7 @@
   margin: 0 auto;
 }
 
-.loader:before{
+.loader:before {
   content: "";
   position: absolute;
   width: 10px;
@@ -24,20 +23,19 @@
   animation: rotatemove 1s infinite;
 }
 
-@keyframes rotatemove{
-  0%{
+@keyframes rotatemove {
+  0% {
     -webkit-transform: scale(1) translateX(0px);
     -ms-transform: scale(1) translateX(0px);
     -o-transform: scale(1) translateX(0px);
     transform: scale(1) translateX(0px);
   }
 
-  100%{
+  100% {
     -webkit-transform: scale(2) translateX(45px);
     -ms-transform: scale(2) translateX(45px);
     -o-transform: scale(2) translateX(45px);
     transform: scale(2) translateX(45px);
   }
 }
-
 </style>

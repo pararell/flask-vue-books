@@ -28,7 +28,11 @@
       </div>
     </template>
     <template v-if="!loading">
-      <h3 slot="header">{{ bookDetail.title }} <span v-if="bookDetail.year">({{bookDetail.year}})</span> </h3>
+      <h3 slot="header">
+        <router-link target="_blank" :to="{ name: 'bookInfo', params: { bookId: bookDetail.id } }">
+          {{ bookDetail.title }}
+        </router-link >
+        <span v-if="bookDetail.year">({{bookDetail.year}})</span> </h3>
       <div slot="body">
         <p v-html="bookDetail.description"> </p>
         <a v-if="bookDetail.link" v-bind:href="bookDetail.link" target="_blank">Goodreads</a>

@@ -1,6 +1,7 @@
 export const bookService = {
   getAll,
   getById,
+  getInfoById,
   add,
   update,
   delete: _delete,
@@ -31,9 +32,28 @@ function getById(book_id, shelf_id, user_id) {
     .then(bookAll =>
       ({...bookAll.book,
         similarBooks: bookAll.similarBooks,
+        rating: bookAll.rating,
         reviews: bookAll.reviews
          .replace(/(?:[^\w-])width\s*(=\s*(["'])[^"']+\2\s*|:\s*[^;]+;)/g, ' ')
          .replace("<iframe", "<iframe width='100%'")
+      }));
+}
+
+function getInfoById(id) {
+  const requestOptions = {
+    method: 'GET',
+    headers: authHeader()
+  };
+
+    return fetch(`${process.env.VUE_APP_API_URL}/api/showBook/${id}`, requestOptions)
+    .then(handleResponse)
+    .then(book =>
+      ({...book,
+        similarBooks: book.similarBooks || [],
+        rating: book.average_rating + (book.ratings_count ? ' (' + book.ratings_count + ')' : '') ,
+        reviews: book.reviews_widget
+          .replace(/(?:[^\w-])width\s*(=\s*(["'])[^"']+\2\s*|:\s*[^;]+;)/g, ' ')
+          .replace("<iframe", "<iframe width='100%'")
       }));
 }
 

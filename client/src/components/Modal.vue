@@ -4,25 +4,18 @@
       <div class="modal-wrapper">
         <div class="modal-container">
           <div class="modal-header">
-            <slot name="header"> &nbsp;
-            </slot>
-            <v-btn class="modal-close-button" @click="$emit('close')">
-                X
-            </v-btn>
+            <slot name="header">&nbsp;</slot>
+            <v-btn class="modal-close-button" @click="$emit('close')">X</v-btn>
           </div>
 
           <div class="modal-body">
-            <slot name="body">
-
-            </slot>
+            <slot name="body"></slot>
           </div>
 
           <div class="modal-footer">
             <slot name="footer">
-              <div> &nbsp;</div>
-              <v-btn class="modal-default-button" @click="$emit('close')">
-                OK
-              </v-btn>
+              <div>&nbsp;</div>
+              <v-btn class="modal-default-button" @click="$emit('close')">OK</v-btn>
             </slot>
           </div>
         </div>
@@ -32,18 +25,17 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions } from "vuex";
 
 export default {
-    computed: {
-      ...mapState('modal', ['showModal'])
-  },
-}
+  computed: {
+    ...mapState("modal", ["showModal"])
+  }
+};
 </script>
 
 
 <style lang="scss" scoped>
-
 .modal-mask {
   position: fixed;
   z-index: 9998;
@@ -51,9 +43,9 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, 0.5);
   display: table;
-  transition: opacity .3s ease;
+  transition: opacity 0.3s ease;
 }
 
 .modal-wrapper {
@@ -67,33 +59,29 @@ export default {
   margin: 0px auto;
   background-color: #fff;
   border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
-  transition: all .3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+  transition: all 0.3s ease;
   font-family: Helvetica, Arial, sans-serif;
   height: 100%;
   overflow-y: auto;
 
-  &::-webkit-scrollbar-track
-{
-   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
-    background-color: #F5F5F5;
-}
+    background-color: #f5f5f5;
+  }
 
-  &::-webkit-scrollbar
-  {
+  &::-webkit-scrollbar {
     width: 12px;
-    background-color: #F5F5F5;
+    background-color: #f5f5f5;
   }
 
-  &::-webkit-scrollbar-thumb
-  {
-      border-radius: 10px;
-      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-      background-color: #eee;
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #eee;
   }
 }
-
 
 .modal-header {
   padding: 20px;
@@ -137,5 +125,4 @@ export default {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
 }
-
 </style>

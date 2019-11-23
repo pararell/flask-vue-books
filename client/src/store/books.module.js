@@ -38,6 +38,19 @@ const actions = {
       }
     );
   },
+  getInfoById({ dispatch, commit }, id) {
+    commit('bookByNameRequest');
+
+    bookService.getInfoById(id).then(
+      book => {
+        commit('bookRequestSuccess', book);
+      },
+      error => {
+        commit('booksRequestFailure', error);
+        dispatch('modal/error', error, { root: true });
+      }
+    );
+  },
   addBook({ dispatch, commit }, book) {
     commit('addBook');
 

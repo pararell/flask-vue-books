@@ -31,35 +31,22 @@
                 <br />
               </span>
               <br />
-              <v-btn
-                v-if="!activeSort"
-                small
-                :to="{ name: 'shelf', params: { shelfId: book.shelf_id }}"
-              >Book shelf</v-btn>
-              <v-btn
-                v-if="activeSort"
-                small
-                :to="{ name: 'shelf', params: { shelfId: book.shelf_id }, query: {sort: activeSort.name + '-' + activeSort.active}}"
-              >Book shelf</v-btn>
-              <br />
               <div>
-                <div>
-                  <v-chip
-                    class="shelf_component-category"
-                    v-for="category in book.categories"
-                    :key="category.name"
-                    :to="{ name: 'category', params: { categoryId: category.id }}"
-                  >{{ category.name }}</v-chip>
-                </div>
-                <v-select
-                  v-model="chosenCategory"
-                  :items="allCategories"
-                  item-text="name"
-                  item-value="id"
-                  label="Category"
-                ></v-select>
-                <v-btn small v-if="chosenCategory" @click="saveCategory()">Save Category</v-btn>
+                <form>
+                  <div class="form-group">
+                    <v-switch v-model="bookIsRead" :label="'Book is readed'"></v-switch>
+                    <v-select
+                      v-model="chosenShelf"
+                      :items="allShelfs"
+                      item-text="name"
+                      item-value="id"
+                      label="Shelf"
+                    ></v-select>
+                  </div>
+                  <v-btn @click="handleBookSave" :disabled="!chosenShelf">Save book</v-btn>
+                </form>
               </div>
+              <br />
             </div>
           </div>
           <template v-if="status.loading">
@@ -94,7 +81,8 @@ import { mapState, mapActions } from "vuex";
 export default {
   data() {
     return {
-      chosenCategory: 0
+      bookIsRead: false,
+      chosenShelf: ""
     };
   },
   components: {
@@ -103,13 +91,11 @@ export default {
   },
   computed: {
     ...mapState("account", ["user"]),
-    ...mapState("shelfs", ["allShelfs", "activeSort"]),
-    ...mapState("categories", ["allCategories"]),
+    ...mapState("shelfs", ["allShelfs"]),
     ...mapState("books", ["book", "bookToShow", "status"])
   },
   mounted() {
     this.tokenRefresh();
-    this.getAllCategories(this.user);
 
     if (!this.allShelfs && this.user) {
       this.getAllShelfs(this.user);
@@ -117,12 +103,7 @@ export default {
 
     this.unsub = this.$store.subscribe((mutation, state) => {
       if (mutation.payload && mutation.type === "account/userSave") {
-        const book = {
-          bookId: this.$route.params.bookId,
-          shelf_id: this.$route.params.shelfId,
-          user_id: this.user
-        };
-        this.getById(book);
+        this.getInfoById(this.$route.params.bookId);
       }
 
       if (mutation.payload && mutation.type === "books/addBookSuccess") {
@@ -132,10 +113,6 @@ export default {
           params: { shelfId: mutation.payload.shelf_id }
         });
       }
-
-      if (mutation.payload && mutation.type === "books/updateBookSuccess") {
-        this.getShelfById({ id: mutation.payload.shelf_id, user: this.user });
-      }
     });
   },
   beforeDestroy() {
@@ -143,21 +120,19 @@ export default {
   },
   methods: {
     ...mapActions("account", ["tokenRefresh"]),
-    ...mapActions("books", ["getById", "updateBook"]),
-    ...mapActions("categories", ["getAllCategories"]),
+    ...mapActions("books", ["getInfoById", "addBook"]),
     ...mapActions("shelfs", {
       getAllShelfs: "getAllShelfs",
       getShelfById: "getById"
     }),
-
-    saveCategory() {
-      if (this.chosenCategory) {
-        const bookToUpdate = {
-          ...this.book,
-          category_id: this.chosenCategory
-        };
-        this.updateBook(bookToUpdate);
-      }
+    handleBookSave(event) {
+      const book = {
+        ...this.book,
+        isRead: this.bookIsRead,
+        shelf_id: this.chosenShelf,
+        user_id: this.user
+      };
+      this.addBook(book);
     }
   }
 };
@@ -196,7 +171,6 @@ export default {
     min-width: 180px;
     display: flex;
     flex-flow: column;
-    // align-items: center;
   }
   &-book-image {
     min-width: 130px;

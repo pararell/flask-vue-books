@@ -89,7 +89,8 @@ class Book(Resource):
         fullBook = {
             'book'          : book.json() if book else {},
             'similarBooks'  : goodReadsbook['similarBooks'],
-            'reviews'       : goodReadsbook['reviews']
+            'reviews'       : goodReadsbook['reviews'],
+            'rating'        : goodReadsbook['rating'],
         }
 
         if book:

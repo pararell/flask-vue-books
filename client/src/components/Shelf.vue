@@ -1,164 +1,187 @@
 <template>
-    <div class="shelf_component">
+  <div class="shelf_component">
+    <template v-if="status.loading">
+      <loader></loader>
+    </template>
 
-        <template v-if="status.loading">
-            <loader></loader>
-       </template>
+    <template v-if="!status.loading && shelf && shelf.books">
+      <div
+        class="shelf_component-header"
+        v-bind:style="{ 'background-image': 'url(' + ( shelf.image || 'https://cdn5.teebooks.com/256-large_default/bookshelf-u-60-cm.jpg') + ')'}"
+      >
+        <div class="shelf_component-background">
+          <h1 class="shelf_component-header-title">
+            <span>
+              {{shelf.name}}
+              <br />
+              <span v-if="shelf.category">( {{shelf.category}} )</span>
+            </span>
+          </h1>
+        </div>
+      </div>
 
-      <template v-if="!status.loading && shelf && shelf.books">
-        <div class="shelf_component-header"
-          v-bind:style="{ 'background-image': 'url(' + ( shelf.image || 'https://cdn5.teebooks.com/256-large_default/bookshelf-u-60-cm.jpg') + ')'}">
-            <div class="shelf_component-background">
-                <h1 class="shelf_component-header-title"> <span> {{shelf.name}} <br/> <span v-if="shelf.category">( {{shelf.category}} )</span></span>
-                </h1>
+      <v-container class="shelf_component-container">
+        <sort
+          v-if="shelf.books && shelf.books"
+          v-bind:type="'shelfs'"
+          v-bind:count="shelf.books.length"
+        ></sort>
+        <div class="shelf_component-books" v-if="shelf.books && shelf.books.length">
+          <div v-for="book in shelf.books" :key="book.id" class="shelf_component-book">
+            <div class="shelf_component-book-content" @click="saveBook(book)">
+              <router-link
+                class="shelf_component-book-link"
+                :to="{ name: 'book', params: { shelfId: book.shelf_id, bookId: book.bookId }}"
+              >
+                <v-img class="shelf_component-book-image" v-bind:src="book.image"></v-img>
+              </router-link>
+              <div class="shelf_component-book-text">
+                <b class="shelf_component-book-title">{{ book.title }}</b>
+                <br />
+                <br />
+                <span class="shelf_component-book-author">{{ book.author }}</span>
+                <br />
+                <span class="shelf_component-book-title">{{ book.year }}</span>
+                <br />
+                <v-chip
+                  class="shelf_component-category"
+                  v-for="category in book.categories"
+                  :key="category.name"
+                  :to="{ name: 'category', params: { categoryId: category.id }}"
+                >{{ category.name }}</v-chip>
+              </div>
             </div>
+            <div class="shelf_component-book-remove" @click="remove(book)">×</div>
+          </div>
         </div>
 
-        <v-container class="shelf_component-container" >
-            <sort v-if="shelf.books && shelf.books"
-              v-bind:type="'shelfs'"
-              v-bind:count="shelf.books.length">
-            </sort>
-            <div class="shelf_component-books" v-if="shelf.books && shelf.books.length">
-                <div v-for="book in shelf.books" :key="book.id" class="shelf_component-book">
-                    <div class="shelf_component-book-content" @click="saveBook(book)">
-                        <router-link class="shelf_component-book-link"
-                          :to="{ name: 'book', params: { shelfId: book.shelf_id, bookId: book.bookId }}">
-                            <v-img class="shelf_component-book-image" v-bind:src="book.image"></v-img>
-                        </router-link>
-                        <div class="shelf_component-book-text">
-                            <b class="shelf_component-book-title"> {{ book.title }}</b> <br/><br/>
-                            <span class="shelf_component-book-author"> {{ book.author }}</span> <br/>
-                            <span class="shelf_component-book-title"> {{ book.year }}</span>
-                            <br/>
-                            <v-chip class="shelf_component-category" v-for="category in book.categories" :key="category.name"
-                              :to="{ name: 'category', params: { categoryId: category.id }}">
-                                {{ category.name }}
-                            </v-chip>
-                        </div>
-                    </div>
-                    <div class="shelf_component-book-remove" @click="remove(book)">×</div>
-                </div>
-            </div>
+        <form @submit.prevent="handleSubmit" class="shelf_component-form">
+          <div class="form-group">
+            <v-text-field
+              type="text"
+              label="Name"
+              v-model="name"
+              name="name"
+              :class="{ 'is-invalid': submitted && !name }"
+            ></v-text-field>
+            <div v-show="submitted && !name" class="invalid-feedback">Name is required</div>
+          </div>
+          <v-btn class="mr-4" @click="handleSubmit">Search books</v-btn>
+        </form>
 
-            <form @submit.prevent="handleSubmit" class="shelf_component-form">
-                <div class="form-group">
-                    <v-text-field
-                      type="text"
-                      label="Name"
-                      v-model="name"
-                      name="name"
-                      :class="{ 'is-invalid': submitted && !name }">
-                    </v-text-field>
-                    <div v-show="submitted && !name" class="invalid-feedback">Name is required</div>
-                </div>
-                <v-btn class="mr-4" @click="handleSubmit">Search books</v-btn>
-            </form>
-
-            <books v-if="foundBooks"
-              v-bind:books="foundBooks"
-              v-bind:bookDetail="bookToShow"
-              v-bind:user="user"
-              v-bind:shelf="shelf.id"
-              v-bind:shelfs="allShelfs"
-              v-bind:loading="booksStatus.loadingBookToShow">
-            </books>
-
-        </v-container>
-      </template>
+        <books
+          v-if="foundBooks"
+          v-bind:books="foundBooks"
+          v-bind:bookDetail="bookToShow"
+          v-bind:user="user"
+          v-bind:shelf="shelf.id"
+          v-bind:shelfs="allShelfs"
+          v-bind:loading="booksStatus.loadingBookToShow"
+        ></books>
+      </v-container>
+    </template>
   </div>
 </template>
 
 <script>
-import Loader from './Loader.vue';
-import Books from './Books.vue';
-import Sort from './Sort.vue';
-import { mapState, mapActions } from 'vuex';
-
+import Loader from "./Loader.vue";
+import Books from "./Books.vue";
+import Sort from "./Sort.vue";
+import { mapState, mapActions } from "vuex";
 
 export default {
-    data() {
-        return {
-            name: '',
-            submitted: false
-        };
-    },
-    components: {
-        loader  : Loader,
-        books   : Books,
-        sort    : Sort
-    },
-    computed: {
-        ...mapState('shelfs', {
-            status    : 'status',
-            query     : 'query',
-            allShelfs : 'allShelfs',
-            shelf     : state => ({...state.shelf, books: state.shelf
-              ? state.shelf.books
-                .filter(book => (book.author && book.author.toLowerCase().includes(state.query))
-                  || (book.title && book.title.toLowerCase().includes(state.query)))
-              : []
-              })
-        }),
-        ...mapState('account', ['user']),
-        ...mapState('books', {
-            foundBooks  : 'foundBooks',
-            bookToShow  : 'bookToShow',
-            booksStatus : 'status'
-        })
-    },
-    created() {
-        this.tokenRefresh();
+  data() {
+    return {
+      name: "",
+      submitted: false
+    };
+  },
+  components: {
+    loader: Loader,
+    books: Books,
+    sort: Sort
+  },
+  computed: {
+    ...mapState("shelfs", {
+      status: "status",
+      query: "query",
+      allShelfs: "allShelfs",
+      shelf: state => ({
+        ...state.shelf,
+        books: state.shelf
+          ? state.shelf.books.filter(
+              book =>
+                (book.author &&
+                  book.author.toLowerCase().includes(state.query)) ||
+                (book.title && book.title.toLowerCase().includes(state.query))
+            )
+          : []
+      })
+    }),
+    ...mapState("account", ["user"]),
+    ...mapState("books", {
+      foundBooks: "foundBooks",
+      bookToShow: "bookToShow",
+      booksStatus: "status"
+    })
+  },
+  created() {
+    this.tokenRefresh();
 
-        if (!this.allShelfs && this.user) {
-            this.getAllShelfs(this.user);
-        }
-
-        this.unsub = this.$store.subscribe((mutation, state) => {
-            if (mutation.type === 'account/userSave' && mutation.payload && (!this.shelf || this.shelf && this.shelf.id != this.$route.params.shelfId)) {
-                this.getById({ id: this.$route.params.shelfId, user: this.user });
-            }
-
-            if (mutation.type === 'books/removeBookSuccess' || mutation.type === 'books/addBookSuccess') {
-                this.getById({ id: this.$route.params.shelfId, user: this.user });
-            }
-
-        });
-    },
-    beforeDestroy() {
-        this.unsub();
-    },
-    methods: {
-        ...mapActions('shelfs', ['getById', 'getAllShelfs']),
-        ...mapActions('account', ['tokenRefresh']),
-        ...mapActions('books', ['searchBooks', 'saveBookToStore', 'removeBook']),
-
-        initForm() {
-            this.name = '';
-        },
-
-        handleSubmit(evt) {
-            this.submitted = true;
-            this.searchBooks(this.name);
-        },
-
-        saveBook(book) {
-            this.saveBookToStore(book);
-        },
-        remove(book) {
-          const bookToRemove = {
-              ...book,
-              shelf_id: this.shelf.id
-          }
-          this.removeBook(bookToRemove);
-        }
+    if (!this.allShelfs && this.user) {
+      this.getAllShelfs(this.user);
     }
 
+    this.unsub = this.$store.subscribe((mutation, state) => {
+      if (
+        mutation.type === "account/userSave" &&
+        mutation.payload &&
+        (!this.shelf ||
+          (this.shelf && this.shelf.id != this.$route.params.shelfId))
+      ) {
+        this.getById({ id: this.$route.params.shelfId, user: this.user });
+      }
+
+      if (
+        mutation.type === "books/removeBookSuccess" ||
+        mutation.type === "books/addBookSuccess"
+      ) {
+        this.getById({ id: this.$route.params.shelfId, user: this.user });
+      }
+    });
+  },
+  beforeDestroy() {
+    this.unsub();
+  },
+  methods: {
+    ...mapActions("shelfs", ["getById", "getAllShelfs"]),
+    ...mapActions("account", ["tokenRefresh"]),
+    ...mapActions("books", ["searchBooks", "saveBookToStore", "removeBook"]),
+
+    initForm() {
+      this.name = "";
+    },
+
+    handleSubmit(evt) {
+      this.submitted = true;
+      this.searchBooks(this.name);
+    },
+
+    saveBook(book) {
+      this.saveBookToStore(book);
+    },
+    remove(book) {
+      const bookToRemove = {
+        ...book,
+        shelf_id: this.shelf.id
+      };
+      this.removeBook(bookToRemove);
+    }
+  }
 };
 </script>
 
 <style lang="scss" scoped>
-
 .shelf_component {
   position: relative;
 
@@ -177,7 +200,7 @@ export default {
 
   &-header-title {
     text-align: center;
-    font-family: 'Gentium Book Basic', serif;
+    font-family: "Gentium Book Basic", serif;
   }
 
   &-background {
@@ -191,7 +214,7 @@ export default {
   }
 
   &-container {
-     z-index: 10;
+    z-index: 10;
   }
 
   &-books {
@@ -214,8 +237,8 @@ export default {
   }
 
   &-book-content {
-      flex: 1;
-      display: flex;
+    flex: 1;
+    display: flex;
   }
 
   &-book-remove {

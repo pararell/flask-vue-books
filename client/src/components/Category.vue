@@ -1,102 +1,112 @@
 <template>
-    <div class="category_component">
+  <div class="category_component">
+    <template v-if="status.loading">
+      <loader></loader>
+    </template>
 
-        <template v-if="status.loading">
-            <loader></loader>
-       </template>
-
-      <template v-if="!status.loading && category">
-        <div class="category_component-header"
-          v-bind:style="{ 'background-image': 'url(' + ( category.image || 'https://cdn5.teebooks.com/256-large_default/bookshelf-u-60-cm.jpg') + ')'}">
-            <div class="category_component-background">
-                <h1 class="category_component-header-title"> <span> {{category.name}} </span>
-                </h1>
-            </div>
+    <template v-if="!status.loading && category">
+      <div
+        class="category_component-header"
+        v-bind:style="{ 'background-image': 'url(' + ( category.image || 'https://cdn5.teebooks.com/256-large_default/bookshelf-u-60-cm.jpg') + ')'}"
+      >
+        <div class="category_component-background">
+          <h1 class="category_component-header-title">
+            <span>{{category.name}}</span>
+          </h1>
         </div>
+      </div>
 
-        <v-container class="category_component-container" v-if="category.books && category.books.length">
-            <sort v-bind:type="'categories'" v-bind:count="category.books.length"></sort>
-            <div class="category_component-books">
-                <div v-for="book in category.books" :key="book.id" class="category_component-book">
-                    <div class="category_component-book-content" @click="saveBook(book)">
-                        <router-link class="category_component-book-text"
-                          :to="{ name: 'book', params: { shelfId: book.shelf_id, bookId: book.bookId }}">
-                            <v-img v-bind:src="book.image"></v-img>
-                            <b class="category_component-book-title"> {{ book.title }}</b> <br/><br/>
-                            <span class="category_component-book-author"> {{ book.author }}</span> <br/>
-                            <span class="category_component-book-title"> {{ book.year }}</span>
-                        </router-link>
-                    </div>
-                    <div class="category_component-book-remove" @click="remove(book)">×</div>
-                </div>
+      <v-container
+        class="category_component-container"
+        v-if="category.books && category.books.length"
+      >
+        <sort v-bind:type="'categories'" v-bind:count="category.books.length"></sort>
+        <div class="category_component-books">
+          <div v-for="book in category.books" :key="book.id" class="category_component-book">
+            <div class="category_component-book-content" @click="saveBook(book)">
+              <router-link
+                class="category_component-book-text"
+                :to="{ name: 'book', params: { shelfId: book.shelf_id, bookId: book.bookId }}"
+              >
+                <v-img v-bind:src="book.image"></v-img>
+                <b class="category_component-book-title">{{ book.title }}</b>
+                <br />
+                <br />
+                <span class="category_component-book-author">{{ book.author }}</span>
+                <br />
+                <span class="category_component-book-title">{{ book.year }}</span>
+              </router-link>
             </div>
-
-        </v-container>
-      </template>
+            <div class="category_component-book-remove" @click="remove(book)">×</div>
+          </div>
+        </div>
+      </v-container>
+    </template>
   </div>
 </template>
 
 <script>
-import Loader from './Loader.vue';
-import Sort from './Sort.vue';
-import { mapState, mapActions } from 'vuex';
-
+import Loader from "./Loader.vue";
+import Sort from "./Sort.vue";
+import { mapState, mapActions } from "vuex";
 
 export default {
-    data() {
-        return {
-        };
-    },
-    components: {
-        loader  : Loader,
-        sort    : Sort
-    },
-    computed: {
-        ...mapState('categories', {
-          status: 'status',
-        category:  state => ({...state.category, books: state.category
-          ? state.category.books
-            .filter(book => (book.author && book.author.toLowerCase().includes(state.query))
-              || (book.title && book.title.toLowerCase().includes(state.query)))
+  data() {
+    return {};
+  },
+  components: {
+    loader: Loader,
+    sort: Sort
+  },
+  computed: {
+    ...mapState("categories", {
+      status: "status",
+      category: state => ({
+        ...state.category,
+        books: state.category
+          ? state.category.books.filter(
+              book =>
+                (book.author &&
+                  book.author.toLowerCase().includes(state.query)) ||
+                (book.title && book.title.toLowerCase().includes(state.query))
+            )
           : []
-          })
-        }),
-        ...mapState('account', ['user'])
-    },
-    created() {
-        this.tokenRefresh();
+      })
+    }),
+    ...mapState("account", ["user"])
+  },
+  created() {
+    this.tokenRefresh();
 
-        this.unsub = this.$store.subscribe((mutation, state) => {
-            if (mutation.type === 'account/userSave' && mutation.payload) {
-                this.getById({ id: this.$route.params.categoryId, user: this.user });
-            }
-        });
-    },
-    beforeDestroy() {
-        this.unsub();
-    },
-    methods: {
-        ...mapActions('categories', ['getById', 'updateCategory']),
-        ...mapActions('account', ['tokenRefresh']),
-        ...mapActions('books', ['saveBookToStore']),
+    this.unsub = this.$store.subscribe((mutation, state) => {
+      if (mutation.type === "account/userSave" && mutation.payload) {
+        this.getById({ id: this.$route.params.categoryId, user: this.user });
+      }
+    });
+  },
+  beforeDestroy() {
+    this.unsub();
+  },
+  methods: {
+    ...mapActions("categories", ["getById", "updateCategory"]),
+    ...mapActions("account", ["tokenRefresh"]),
+    ...mapActions("books", ["saveBookToStore"]),
 
-      saveBook(book) {
-            this.saveBookToStore(book);
-        },
-      remove(book) {
-          const bookToRemove = {
-              ...this.category,
-              book_id: book.id
-          }
-          this.updateCategory(bookToRemove);
-        }
+    saveBook(book) {
+      this.saveBookToStore(book);
+    },
+    remove(book) {
+      const bookToRemove = {
+        ...this.category,
+        book_id: book.id
+      };
+      this.updateCategory(bookToRemove);
     }
-
+  }
 };
 </script>
 
 <style lang="scss" scoped>
-
 .category_component {
   position: relative;
 
@@ -115,7 +125,7 @@ export default {
 
   &-header-title {
     text-align: center;
-    font-family: 'Gentium Book Basic', serif;
+    font-family: "Gentium Book Basic", serif;
   }
 
   &-background {
@@ -129,7 +139,7 @@ export default {
   }
 
   &-container {
-     z-index: 10;
+    z-index: 10;
   }
 
   &-books {
@@ -150,7 +160,7 @@ export default {
   }
 
   &-book-content {
-      flex: 1;
+    flex: 1;
   }
 
   &-book-remove {
@@ -171,6 +181,4 @@ export default {
     color: rgba(0, 0, 0, 0.9);
   }
 }
-
-
 </style>

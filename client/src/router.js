@@ -8,6 +8,7 @@ import Book from './components/Book.vue';
 import Categories from './components/Categories.vue';
 import Category from './components/Category.vue';
 import AddBook from './components/AddBook.vue';
+import BookInfo from './components/BookInfo.vue';
 
 Vue.use(Router);
 
@@ -26,6 +27,7 @@ const router = new Router({
     { path: '/category/:categoryId', name: 'category', component: Category },
     { path: '/book/:shelfId/:bookId', name: 'book', component: Book },
     { path: '/addbook', name: 'addBook', component: AddBook },
+    { path: '/bookinfo/:bookId', name: 'bookInfo', component: BookInfo },
     { path: '*', redirect: '/' },
   ],
   scrollBehavior (to, from, savedPosition) {
