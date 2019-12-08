@@ -39,31 +39,52 @@ import { mapState, mapActions } from "vuex";
 export default {
   data() {
     return {
+      firstSort: true,
       activeSort: null,
       query: ""
     };
   },
-  created() {
-    if (this.$route.query.sort) {
-      const sortName = this.$route.query.sort.split("-")[0];
-      this.activeSort = sortName;
-      const sortToSend = {
-        name: sortName,
-        active: this.$route.query.sort.split("-")[1]
-      };
-      if (this.type === "categories") {
-        this.categoriesSetSort(sortToSend);
+  mounted() {
+      if (this.$route.query.sort && this.count) {
+        const sortName = this.$route.query.sort.split("-")[0];
+        this.activeSort = sortName;
+            const sortToSend = {
+                name: sortName,
+                active: this.$route.query.sort.split("-")[1]
+            };
+            if (this.type === "categories") {
+                this.categoriesSetSort(sortToSend);
+            }
+            if (this.type === "shelfs") {
+                this.shelfsSetSort(sortToSend);
+            }
       }
-      if (this.type === "shelfs") {
-        this.shelfsSetSort(sortToSend);
-      }
-    }
   },
   beforeDestroy() {
     this.categoriesSetQuery("");
     this.shelfsSetQuery("");
   },
   props: ["type", "count"],
+  watch: {
+      count(newVal, oldVal) {
+        if (this.firstSort && newVal != 0) {
+           if (this.$route.query.sort) {
+              const sortName = this.$route.query.sort.split("-")[0];
+              const sortToSend = {
+                name: sortName,
+                active: this.$route.query.sort.split("-")[1]
+              };
+              if (this.type === "categories") {
+                this.categoriesSetSort(sortToSend);
+              }
+              if (this.type === "shelfs") {
+                this.shelfsSetSort(sortToSend);
+             }
+          }
+          this.firstSort = false;
+        }
+      }
+  },
   computed: {
     ...mapState("shelfs", { shelfsSort: "sorts", shelfsQuery: "query" }),
     ...mapState("categories", {

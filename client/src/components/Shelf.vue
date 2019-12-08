@@ -22,7 +22,7 @@
 
       <v-container class="shelf_component-container">
         <sort
-          v-if="shelf.books && shelf.books"
+          v-if="shelf.books"
           v-bind:type="'shelfs'"
           v-bind:count="shelf.books.length"
         ></sort>

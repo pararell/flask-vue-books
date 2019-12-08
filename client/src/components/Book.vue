@@ -6,6 +6,14 @@
     <template v-if="book">
       <v-container>
         <div class="book_component-book-wrapp">
+          <div class="book_component-book-shelf-link">
+            <v-btn v-if="!activeSort" x-small
+                :to="{ name: 'shelf', params: { shelfId: book.shelf_id }}"
+              ><v-icon small>mdi-bookmark-multiple</v-icon></v-btn>
+              <v-btn v-if="activeSort" x-small
+                :to="{ name: 'shelf', params: { shelfId: book.shelf_id }, query: {sort: activeSort.name + '-' + activeSort.active}}"
+              ><v-icon small>mdi-bookmark-multiple</v-icon></v-btn>
+          </div>
           <div class="book_component-book-detail">
             <div>
               <h1>
@@ -20,18 +28,50 @@
               <a v-bind:href="book.link" target="_blank">
                 <v-img class="book_component-book-image" v-bind:src="book.image"></v-img>
               </a>
-              <span v-if="book.pages">
-                <v-icon>mdi-book-open-page-variant</v-icon>
-                {{ book.pages }}
-                <br />
-              </span>
+              <div class="book_component-book-pages">
+                <span v-if="book.pages">
+                  <v-icon small color="blue-grey darken-3">mdi-book-open-page-variant</v-icon>
+                  <span class="book_component-book-smallinfo"> {{ book.pages }}</span> &nbsp;&nbsp;
+                </span>
+                <v-btn x-small @click="editOpen = !editOpen"><v-icon small>mdi-pencil</v-icon></v-btn>
+              </div>
               <span v-if="book.rating">
-                <v-icon>mdi-star</v-icon>
-                {{ book.rating }}
-                <br />
+                <v-icon small color="amber">mdi-star</v-icon>
+                <span  class="book_component-book-smallinfo"> {{ book.rating }}</span>
               </span>
-              <br />
-              <v-btn
+              <div>
+                <div class="book_component-changes">
+                  <div v-if="editOpen">
+                  <v-switch v-model="book.isRead" :label="'Is readed'" inset></v-switch>
+                  <v-text-field
+                    type="text"
+                    label="Position"
+                    v-model="book.position"
+                    name="position"
+                    :class="{ 'is-invalid': !book.position }"
+                  ></v-text-field>
+                  <v-btn small :disabled="!book.position" @click="savePositionAndReadStatus()">Save</v-btn>
+                  </div>
+                  <br />
+                </div>
+                <div>
+                  <v-chip
+                    class="book_component-category"
+                    v-for="category in book.categories"
+                    :key="category.name"
+                    :to="{ name: 'category', params: { categoryId: category.id }}"
+                  >{{ category.name }}</v-chip>
+                </div>
+                <v-select v-if="editOpen"
+                  v-model="chosenCategory"
+                  :items="allCategories"
+                  item-text="name"
+                  item-value="id"
+                  label="Category"
+                ></v-select>
+                <v-btn small v-if="chosenCategory && editOpen" @click="saveCategory()">Save Category</v-btn>
+              </div>
+              <!-- <v-btn
                 v-if="!activeSort"
                 small
                 :to="{ name: 'shelf', params: { shelfId: book.shelf_id }}"
@@ -40,26 +80,7 @@
                 v-if="activeSort"
                 small
                 :to="{ name: 'shelf', params: { shelfId: book.shelf_id }, query: {sort: activeSort.name + '-' + activeSort.active}}"
-              >Book shelf</v-btn>
-              <br />
-              <div>
-                <div>
-                  <v-chip
-                    class="shelf_component-category"
-                    v-for="category in book.categories"
-                    :key="category.name"
-                    :to="{ name: 'category', params: { categoryId: category.id }}"
-                  >{{ category.name }}</v-chip>
-                </div>
-                <v-select
-                  v-model="chosenCategory"
-                  :items="allCategories"
-                  item-text="name"
-                  item-value="id"
-                  label="Category"
-                ></v-select>
-                <v-btn small v-if="chosenCategory" @click="saveCategory()">Save Category</v-btn>
-              </div>
+              >Book shelf</v-btn> -->
             </div>
           </div>
           <template v-if="status.loading">
@@ -94,7 +115,8 @@ import { mapState, mapActions } from "vuex";
 export default {
   data() {
     return {
-      chosenCategory: 0
+      chosenCategory: 0,
+      editOpen: false
     };
   },
   components: {
@@ -143,7 +165,7 @@ export default {
   },
   methods: {
     ...mapActions("account", ["tokenRefresh"]),
-    ...mapActions("books", ["getById", "updateBook"]),
+    ...mapActions("books", ["getById", "updateBook", "updateBookInfo"]),
     ...mapActions("categories", ["getAllCategories"]),
     ...mapActions("shelfs", {
       getAllShelfs: "getAllShelfs",
@@ -157,6 +179,14 @@ export default {
           category_id: this.chosenCategory
         };
         this.updateBook(bookToUpdate);
+        this.editOpen = false;
+      }
+    },
+    savePositionAndReadStatus() {
+      if (this.book.position) {
+        const bookToSend = {...this.book, isRead: this.book.isRead ? 1 : 0}
+        this.updateBookInfo(bookToSend);
+        this.editOpen = false;
       }
     }
   }
@@ -169,6 +199,7 @@ export default {
     display: flex;
     flex-wrap: wrap;
     flex-flow: column;
+    position: relative;
   }
   &-book-detail {
     display: flex;
@@ -177,6 +208,7 @@ export default {
     padding: 20px;
     margin: 10px 0 5px 0;
     background: #fff;
+    position: relative;
 
     @media (max-width: 600px) {
       flex-wrap: wrap;
@@ -191,15 +223,30 @@ export default {
     line-height: 18px;
   }
   &-book-image-wrap {
-    padding: 15px;
+    padding: 0 10px;
     margin: 0 10px;
     min-width: 180px;
     display: flex;
     flex-flow: column;
     // align-items: center;
   }
+  &-book-shelf-link {
+    position: absolute;
+    top: 5px;
+    right: 0;
+    z-index: 10;
+  }
   &-book-image {
     min-width: 130px;
+  }
+  &-book-pages {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+  }
+  &-book-smallinfo {
+    font-size: 15px;
+    color: rgba(0, 0, 0, 0.6);
   }
   &-book-info {
     display: flex;
@@ -212,4 +259,5 @@ export default {
     margin-bottom: 20px;
   }
 }
+
 </style>

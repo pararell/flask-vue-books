@@ -7,18 +7,17 @@
       </template>
       <template v-if="!status.loading && allShelfs">
         <div class="shelfs_component-shelfs-list">
-          <div v-for="shelf in allShelfs" :key="shelf.id">
+          <div class="shelfs_component-shelf-wrap" v-for="shelf in allShelfs" :key="shelf.id">
             <v-card
               class="shelfs_component-shelf"
               max-width="300"
               :to="{ name: 'shelf', params: { shelfId: shelf.id }}">
               <v-img
                 v-if="!shelf.image"
-                height="400"
                 class="white--text"
                 src="https://cdn5.teebooks.com/256-large_default/bookshelf-u-60-cm.jpg"
               ></v-img>
-              <v-img v-if="shelf.image" height="400" class="white--text" v-bind:src="shelf.image"></v-img>
+              <v-img v-if="shelf.image" height="300" class="white--text" v-bind:src="shelf.image"></v-img>
               <h2 class="shelfs_component-shelf-text" headline>
                 {{ shelf.name }}
                 <br />
@@ -151,6 +150,10 @@ export default {
     display: flex;
     flex-flow: wrap;
     margin-bottom: 50px;
+  }
+
+  &-shelf-wrap {
+    max-width: 300px;
   }
 
   &-shelf {

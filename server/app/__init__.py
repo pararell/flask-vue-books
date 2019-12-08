@@ -68,7 +68,7 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 
 from .main.resources.shelf import Shelf, ShelfList
 from .main.resources.user import UserRegister, UserLogin, User, TokenRefresh, UserLogout
-from .main.resources.book import Book, BookList
+from .main.resources.book import Book, BookList, BookUpdate
 from .main.resources.searchBook import SearchBook
 from .main.resources.showBook import ShowBook
 from .main.resources.category import Category, CategoriesList
@@ -81,6 +81,7 @@ api.add_resource(ShelfList, '/api/shelfs/<int:user_id>')
 api.add_resource(Category, '/api/category/<int:category_id>/<int:user_id>', '/api/addCategory/<string:name>/<int:user_id>', '/api/updateCategory/<int:category_id>/<int:user_id>/<int:book_id>')
 api.add_resource(CategoriesList, '/api/categories/<int:user_id>')
 api.add_resource(Book, '/api/book/<int:shelf_id>/<int:bookId>/<int:user_id>', '/api/updateBook/<int:shelf_id>/<int:bookId>/<int:category_id>/<int:user_id>')
+api.add_resource(BookUpdate, '/api/bookUpdate/<int:shelf_id>/<int:bookId>/<int:user_id>/<int:position>/<int:is_read>')
 api.add_resource(SearchBook, '/api/searchBook/<string:name>')
 api.add_resource(ShowBook, '/api/showBook/<string:id>')
 api.add_resource(BookList, '/api/books')

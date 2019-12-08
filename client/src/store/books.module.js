@@ -77,6 +77,19 @@ const actions = {
       }
     );
   },
+  updateBookInfo({ dispatch, commit }, book) {
+    commit('addBook');
+
+    bookService.updateInfo(book).then(
+      book => {
+        commit('updateBookSuccess', book);
+      },
+      error => {
+        commit('bookRequestFailure', error);
+        dispatch('modal/error', error, { root: true });
+      }
+    );
+  },
   removeBook({ dispatch, commit }, book) {
     commit('addBook');
 

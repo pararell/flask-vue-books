@@ -76,6 +76,11 @@ class Book(Resource):
                         required=False,
                         help="Categories."
                         )
+    parser.add_argument('position',
+                        type=int,
+                        required=False,
+                        help="Position in the shelf."
+                        )
 
     @jwt_required
     def get(self, shelf_id, bookId, user_id):
@@ -139,6 +144,19 @@ class Book(Resource):
 
         if book:
             book.categories.append(category)
+            book.save_to_db()
+
+        return book.json() if book else {}
+
+
+class BookUpdate(Resource):
+    @jwt_required
+    def put(self, shelf_id, bookId, user_id, position, is_read):
+        book = BookModel.find_by_id(bookId, shelf_id, user_id)
+
+        if book:
+            book.isRead = True if is_read else False
+            book.position = float(position)
             book.save_to_db()
 
         return book.json() if book else {}

@@ -7,10 +7,11 @@ const state = {
   allShelfs: null,
   shelf: null,
   sorts: [
-    { label: 'added',  name: 'id',     active: 'desc' },
-    { label: 'year',   name: 'year',   active: ''  },
-    { label: 'name',   name: 'title',  active: '' },
-    { label: 'author', name: 'author', active: '' }
+    { label: 'added',     name: 'id',       active: 'desc' },
+    { label: 'position',  name: 'position', active: '' },
+    { label: 'year',      name: 'year',     active: ''  },
+    { label: 'name',      name: 'title',    active: '' },
+    { label: 'author',    name: 'author',   active: '' }
   ],
   activeSort: null,
   query: ''
@@ -128,21 +129,23 @@ const mutations = {
     state.shelf = state.shelf
       ? {...state.shelf,
           books: state.shelf.books
-            .map(book => ({...book, id: book.id.toString()}))
             .sort((a,b) => {
+              if (activeSort.name == 'position' || activeSort.name == 'id') {
+                return (activeSort.active === 'asc')
+                  ? a[activeSort.name]  - b[activeSort.name]
+                  : b[activeSort.name]  - a[activeSort.name];
+              }
               a[activeSort.name] = a[activeSort.name] || '';
               b[activeSort.name] = b[activeSort.name] || '';
-              if (activeSort.active === 'asc') {
-                return a[activeSort.name].localeCompare(b[activeSort.name]);
-              } else {
-                return b[activeSort.name].localeCompare(a[activeSort.name]);
-              }
+              return (activeSort.active === 'asc')
+                ? a[activeSort.name].localeCompare(b[activeSort.name])
+                : b[activeSort.name].localeCompare(a[activeSort.name]);
             })
         }
       : null;
   },
   setQuery(state, query) {
-    state.query = query;
+    state.query = query ? query.toLowerCase() : query;
   }
 };
 

@@ -4,6 +4,7 @@ export const bookService = {
   getInfoById,
   add,
   update,
+  updateInfo,
   delete: _delete,
   searchBooks,
   showBook
@@ -75,6 +76,16 @@ function update(book) {
   };
 
   return fetch(`${process.env.VUE_APP_API_URL}/api/updateBook/${book.shelf_id}/${book.bookId}/${book.category_id}/${book.user_id}`, requestOptions).then(handleResponse);
+}
+
+function updateInfo(book) {
+  const requestOptions = {
+    method: 'PUT',
+    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+    body: {}
+  };
+
+  return fetch(`${process.env.VUE_APP_API_URL}/api/bookUpdate/${book.shelf_id}/${book.bookId}/${book.user_id}/${book.position}/${book.isRead}`, requestOptions).then(handleResponse);
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript
