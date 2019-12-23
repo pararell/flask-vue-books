@@ -51,9 +51,10 @@ def showBookApply(xmldata):
     book['year']    = book['publication_year'] if book['publication_year'] else ''
     book['image']   = book['image_url'] if book['image_url'] else ''
     book['similarBooks'] = []
+    similar_books = book.get('similar_books')
 
-    if (book['similar_books'] and book['similar_books']['book'] and len(book['similar_books']['book'])):
-        for item in book['similar_books']['book']:
+    if (similar_books and similar_books['book'] and len(similar_books['book'])):
+        for item in similar_books['book']:
 
             author = item['authors']['author'][0]['name'] if isinstance(item['authors']['author'], list) else item['authors']['author']['name']
 
