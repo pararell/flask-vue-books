@@ -154,4 +154,8 @@ export default {
     align-items: center;
   }
 }
+
+.theme--light.v-chip:not(.v-chip--active) {
+    background: rgba(0, 0, 0, 0.06) !important;
+}
 </style>

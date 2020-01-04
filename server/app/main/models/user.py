@@ -5,11 +5,11 @@ class UserModel(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80))
+    email    = db.Column(db.String(800))
     password = db.Column(db.String(80))
 
-    def __init__(self, username, password):
-        self.username = username
+    def __init__(self, email, password):
+        self.email    = email
         self.password = self.hashed_password(password)
 
     @staticmethod
@@ -18,13 +18,13 @@ class UserModel(db.Model):
 
     def json(self):
         return {
-            'id': self.id,
-            'username': self.username
+            'id'      : self.id,
+            'email'   : self.email
         }
 
     @classmethod
-    def find_by_username(cls, username, password):
-        user = cls.query.filter_by(username=username).first()
+    def find_by_email(cls, email, password):
+        user = cls.query.filter_by(email=email).first()
         if user:
             pwhash = bcrypt.check_password_hash(user.password, password)
             if pwhash:

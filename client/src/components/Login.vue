@@ -6,12 +6,12 @@
         <div class="form-group">
           <v-text-field
             type="text"
-            label="Username"
-            v-model="username"
-            name="username"
-            :class="{ 'is-invalid': submitted && !username }"
+            label="Email"
+            v-model="email"
+            name="email"
+            :class="{ 'is-invalid': submitted && !email }"
           ></v-text-field>
-          <div v-show="submitted && !username" class="invalid-feedback">Username is required</div>
+          <div v-show="submitted && !email" class="invalid-feedback">Email is required</div>
         </div>
         <div class="form-group">
           <v-text-field
@@ -35,7 +35,7 @@ import { mapState, mapActions } from "vuex";
 export default {
   data() {
     return {
-      username: "",
+      email: "",
       password: "",
       submitted: false
     };
@@ -48,14 +48,15 @@ export default {
     this.logout();
   },
   methods: {
-    ...mapActions("account", ["login", "logout"]),
+    ...mapActions("account", ["login", "logout", "goodreadsLogin"]),
     handleSubmit(e) {
       this.submitted = true;
-      const { username, password } = this;
-      if (username && password) {
-        this.login({ username, password });
+      const { email, password } = this;
+      if (email && password) {
+        this.login({ email, password });
       }
     }
+
   }
 };
 </script>

@@ -76,6 +76,7 @@ export default {
 <style lang="scss">
 html {
   height: 100%;
+  scroll-behavior: auto;
 }
 body {
   min-height: 100%;
@@ -90,4 +91,8 @@ body {
   justify-content: center;
   display: flex;
 }
+.theme--light.v-sheet {
+  background: #fffffa !important;
+}
+
 </style>

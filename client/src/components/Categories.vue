@@ -11,6 +11,7 @@
             <v-card
               class="categories_component-category"
               max-width="150"
+              min-width="150"
               :to="{ name: 'category', params: { categoryId: category.id }}"
             >
               <v-img
@@ -96,14 +97,11 @@ export default {
       ) {
         this.getAllCategories(this.user);
       }
-      if (
-        mutation.payload &&
-        mutation.type === "categories/addCategorysuccess"
-      ) {
+      if (mutation.type === "categories/addCategorySuccess") {
         this.getAllCategories(this.user);
       }
 
-      if (mutation.type === "categories/removeCategorysuccess") {
+      if (mutation.type === "categories/removeCategorySuccess") {
         this.getAllCategories(this.user);
       }
     });

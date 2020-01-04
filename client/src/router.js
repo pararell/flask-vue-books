@@ -31,14 +31,17 @@ const router = new Router({
     { path: '*', redirect: '/' },
   ],
   scrollBehavior (to, from, savedPosition) {
-
-     if(rememberScrolling[to.path] && to.name != from.name) {
-      return rememberScrolling[to.path];
-    } else if (savedPosition) {
-      return savedPosition;
-    } else {
-      return { x: 0, y: 0 }
-    }
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if(rememberScrolling[to.path] && to.name != from.name) {
+          resolve(rememberScrolling[to.path]);
+        } else if (savedPosition) {
+          resolve(savedPosition);
+        } else {
+          resolve({ x: 0, y: 0 });
+        }
+      }, 200)
+    });
   }
 });
 

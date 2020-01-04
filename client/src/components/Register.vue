@@ -6,8 +6,8 @@
         <div class="form-group">
           <v-text-field
             type="text"
-            label="Username"
-            v-model="user.username"
+            label="Email"
+            v-model="user.email"
             name="lastName"
             :class="{ 'is-invalid': submitted }"
           ></v-text-field>
@@ -33,7 +33,7 @@ export default {
   data() {
     return {
       user: {
-        username: "",
+        email: "",
         password: ""
       },
       submitted: false

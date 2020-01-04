@@ -1,4 +1,4 @@
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, request
 from flask_jwt_extended import get_jwt_identity, jwt_required, get_jwt_claims, fresh_jwt_required, jwt_optional
 from app.main.models.book import BookModel
 from app.main.models.category import CategoryModel
@@ -81,6 +81,11 @@ class Book(Resource):
                         required=False,
                         help="Position in the shelf."
                         )
+    parser.add_argument('note',
+                        type=str,
+                        required=False,
+                        help="note."
+                        )
 
     @jwt_required
     def get(self, shelf_id, bookId, user_id):
@@ -154,9 +159,12 @@ class BookUpdate(Resource):
     def put(self, shelf_id, bookId, user_id, position, is_read):
         book = BookModel.find_by_id(bookId, shelf_id, user_id)
 
+        data = request.get_json()
+
         if book:
             book.isRead = True if is_read else False
             book.position = float(position)
+            book.note     = data.get('note')
             book.save_to_db()
 
         return book.json() if book else {}

@@ -13,7 +13,7 @@ from app.main.models.user import UserModel
 from app.main.blacklist import BLACKLIST
 
 _user_parser = reqparse.RequestParser()
-_user_parser.add_argument('username',
+_user_parser.add_argument('email',
                           type=str,
                           required=True,
                           help="This field cannot be blank."
@@ -29,10 +29,10 @@ class UserRegister(Resource):
     def post(self):
         data = _user_parser.parse_args()
 
-        if UserModel.find_by_username(data['username'], data['password']):
-            return {"message": "A user with that username already exists"}, 400
+        if UserModel.find_by_email(data['email'], data['password']):
+            return {"message": "A user with that email already exists"}, 400
 
-        user = UserModel(data['username'], data['password'])
+        user = UserModel(data['email'], data['password'])
         user.save_to_db()
 
         return {"message": "User created successfully."}, 201
@@ -42,7 +42,7 @@ class UserLogin(Resource):
     def post(self):
         data = _user_parser.parse_args()
 
-        user = UserModel.find_by_username(data['username'],data['password'])
+        user = UserModel.find_by_email(data['email'],data['password'])
 
         if user:
             access_token = create_access_token(identity=user.id, fresh=True)

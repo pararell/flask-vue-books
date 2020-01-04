@@ -1,7 +1,7 @@
 <template>
  <div class="books_component">
     <div class="books_component-books" v-if="books">
-    <v-sheet class="mx-auto"  max-width="1200">
+    <v-sheet class="mx-auto" max-width="1200">
       <v-slide-group show-arrows>
         <v-slide-item class="books_component-book" v-for="book in books" :key="book.id">
               <div class="books_component-book-content"  @click="chooseBook(book)">
@@ -21,7 +21,7 @@
       </v-sheet>
   </div>
 
-  <modal v-if="showModal" @close="toggleModal">
+  <modal v-if="showModal === 'book_detail'" @close="toggleModal('book_detail')">
     <template v-if="loading">
       <div slot="body">
         <loader></loader>
@@ -31,7 +31,7 @@
       <h3 slot="header">
         <router-link target="_blank" :to="{ name: 'bookInfo', params: { bookId: bookDetail.id } }">
           {{ bookDetail.title }}
-        </router-link >
+        </router-link>
         <span v-if="bookDetail.year">({{bookDetail.year}})</span> </h3>
       <div slot="body">
         <p v-html="bookDetail.description"> </p>
@@ -53,7 +53,7 @@
               <v-btn class="btn btn-primary" @click="handleBookSave">Save book</v-btn>
           </div>
         </form>
-          <v-btn class="books_component-book-modal-button-close" @click="toggleModal">
+          <v-btn class="books_component-book-modal-button-close" @click="toggleModal('book_detail')">
             OK
         </v-btn>
       </div>
@@ -89,7 +89,7 @@
         ...mapActions('modal', ['toggleModal']),
 
         chooseBook(book) {
-          this.toggleModal();
+          this.toggleModal('book_detail');
           this.showBook(book.id);
           this.chosenShelf = this.shelfs
             .filter(shelf => shelf.id === this.shelf)[0] || this.chosenShelf;
@@ -101,7 +101,7 @@
               user_id : this.user
           };
           this.addBook(book);
-          this.toggleModal();
+          this.toggleModal('book_detail');
           this.removeFoundBooks();
       },
     }

@@ -9,11 +9,11 @@ export const userService = {
   tokenRefresh
 };
 
-function login(username, password) {
+function login(email, password) {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password })
+    body: JSON.stringify({ email, password })
   };
 
   return fetch(`${process.env.VUE_APP_API_URL}/api/login`, requestOptions)

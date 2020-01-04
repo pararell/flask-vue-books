@@ -16,6 +16,7 @@ class BookModel(db.Model):
     link             = db.Column(db.Text)
     isRead           = db.Column(db.Boolean, server_default=expression.false(), nullable=False)
     position         = db.Column(db.Integer)
+    note             = db.Column(db.Text)
 
     categories       = db.relationship('CategoryModel', secondary=categoryAndBooks, uselist=True, lazy = 'dynamic')
 
@@ -25,7 +26,7 @@ class BookModel(db.Model):
     user_id          = db.Column(db.Integer, db.ForeignKey('users.id'))
     user             = db.relationship('UserModel')
 
-    def __init__(self, bookId, title, description, author, image, year, pages, link, isRead, shelf_id, user_id, categories, position):
+    def __init__(self, bookId, title, description, author, image, year, pages, link, isRead, shelf_id, user_id, categories, position, note):
         self.bookId             = bookId
         self.title              = title
         self.description        = description
@@ -39,6 +40,7 @@ class BookModel(db.Model):
         self.isRead             = isRead
         self.categories         = categories or []
         self.position           = position or self.id
+        self.note               = note
 
     def json(self):
         return {
@@ -55,7 +57,8 @@ class BookModel(db.Model):
             'user_id'       : self.user_id,
             'isRead'        : self.isRead,
             'categories'    : [{'id': category.id, 'name': category.name} for category in self.categories],
-            'position'      : self.position or self.id
+            'position'      : self.position or self.id,
+            'note'          : self.note
         }
 
 

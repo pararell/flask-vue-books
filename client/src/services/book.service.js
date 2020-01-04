@@ -82,7 +82,7 @@ function updateInfo(book) {
   const requestOptions = {
     method: 'PUT',
     headers: { ...authHeader(), 'Content-Type': 'application/json' },
-    body: {}
+    body:  JSON.stringify({note: book.note})
   };
 
   return fetch(`${process.env.VUE_APP_API_URL}/api/bookUpdate/${book.shelf_id}/${book.bookId}/${book.user_id}/${book.position}/${book.isRead}`, requestOptions).then(handleResponse);

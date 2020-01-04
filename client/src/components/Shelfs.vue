@@ -17,7 +17,7 @@
                 class="white--text"
                 src="https://cdn5.teebooks.com/256-large_default/bookshelf-u-60-cm.jpg"
               ></v-img>
-              <v-img v-if="shelf.image" height="300" class="white--text" v-bind:src="shelf.image"></v-img>
+              <v-img v-if="shelf.image" class="white--text" v-bind:src="shelf.image"></v-img>
               <h2 class="shelfs_component-shelf-text" headline>
                 {{ shelf.name }}
                 <br />
