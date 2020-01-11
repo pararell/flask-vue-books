@@ -58,7 +58,10 @@
             <loader></loader>
           </template>
           <div class="book_component-book-info">
-            <div class="book_component-book-review" v-if="book.reviews" v-html="book.reviews"></div>
+            <div class="book_component-book-review" v-if="book.reviews">
+              <div v-if="showReviews" v-html="book.reviews"></div>
+              <v-btn @click="showReviews = !showReviews">Toggle Goodreads reviews</v-btn>
+            </div>
             <div v-if="book.similarBooks && book.similarBooks.length">
               <h2 v-if="book.similarBooks">Similar books</h2>
               <books
@@ -127,7 +130,8 @@ import { mapState, mapActions } from "vuex";
 export default {
   data() {
     return {
-      chosenCategory: 0
+      chosenCategory: 0,
+      showReviews: false
     };
   },
   components: {
@@ -224,7 +228,6 @@ export default {
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
     padding: 20px;
     margin: 10px 0 5px 0;
-    background: #fff;
     position: relative;
 
     @media (max-width: 600px) {
@@ -274,7 +277,6 @@ export default {
   &-book-review {
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
     padding: 25px;
-    background: #fff;
     margin-bottom: 20px;
   }
   &-edit {
@@ -290,12 +292,14 @@ export default {
     flex-flow: column;
     padding: 10px;
     flex: 1;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin: 2px;
   }
   &-changes {
     padding: 10px;
     flex: 1;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin: 2px;
   }
   &-changes-top {
     display: flex;

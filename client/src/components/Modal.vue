@@ -93,7 +93,7 @@ export default {
 }
 
 .modal-body {
-  height: 250px;
+  height: 50vh;
   overflow-y: auto;
   padding: 20px;
 }

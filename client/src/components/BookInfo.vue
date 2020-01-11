@@ -53,7 +53,10 @@
             <loader></loader>
           </template>
           <div class="book_component-book-info">
-            <div class="book_component-book-review" v-if="book.reviews" v-html="book.reviews"></div>
+            <div class="book_component-book-review" v-if="book.reviews">
+              <div v-if="showReviews" v-html="book.reviews"></div>
+              <v-btn @click="showReviews = !showReviews">Toggle Goodreads reviews</v-btn>
+            </div>
             <div v-if="book.similarBooks && book.similarBooks.length">
               <h2 v-if="book.similarBooks">Similar books</h2>
               <books
@@ -82,6 +85,7 @@ export default {
   data() {
     return {
       bookIsRead: false,
+      showReviews: false,
       chosenShelf: ""
     };
   },
@@ -151,7 +155,6 @@ export default {
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
     padding: 20px;
     margin: 10px 0 5px 0;
-    background: #fff;
 
     @media (max-width: 600px) {
       flex-wrap: wrap;
@@ -182,7 +185,6 @@ export default {
   &-book-review {
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
     padding: 25px;
-    background: #fff;
     margin-bottom: 20px;
   }
 }

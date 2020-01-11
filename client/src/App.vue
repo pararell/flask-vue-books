@@ -95,4 +95,7 @@ body {
   background: #fffffa !important;
 }
 
+.theme--light.v-application {
+  background: #fffffa !important;
+}
 </style>
