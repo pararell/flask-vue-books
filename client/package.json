@@ -27,7 +27,7 @@
     "eslint": "^6.6.0",
     "eslint-plugin-vue": "^6.0.1",
     "material-design-icons-iconfont": "^5.0.1",
-    "node-sass": "^4.13.0",
+    "node-sass": "^4.13.1",
     "path": "^0.12.7",
     "sass-loader": "^8.0.0",
     "vue-template-compiler": "^2.5.21"
